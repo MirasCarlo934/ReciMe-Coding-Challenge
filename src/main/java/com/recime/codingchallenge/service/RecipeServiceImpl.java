@@ -4,8 +4,6 @@ import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import java.util.List;
 @Service("recipeService")
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
-    private static final Logger log = LoggerFactory.getLogger(RecipeServiceImpl.class);
     private final RecipeRepository recipeRepository;
 
     public RecipeServiceImpl(RecipeRepository recipeRepository) {
