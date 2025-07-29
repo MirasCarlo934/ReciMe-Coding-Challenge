@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/recime_db
+    username: recime_user
+    password: recime_password
+    driver-class-name: org.postgresql.Driver
