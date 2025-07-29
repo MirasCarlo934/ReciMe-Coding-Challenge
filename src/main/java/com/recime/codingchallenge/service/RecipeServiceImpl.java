@@ -7,7 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("recipeService")
 @Slf4j
@@ -17,6 +18,15 @@ public class RecipeServiceImpl implements RecipeService {
 
     public RecipeServiceImpl(RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
+    }
+
+    @Override
+    public List<Recipe> getAllRecipes() {
+        // Convert Iterable to List since it's the industry standard return type for a collection of objects
+        log.info("Fetching all recipes from the repository");
+        List<Recipe> recipes = new ArrayList<>();
+        recipeRepository.findAll().forEach(recipes::add);
+        return recipes;
     }
 
     @Override

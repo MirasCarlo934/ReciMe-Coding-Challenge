@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class RecipeRestController {
     private final RecipeService recipeService;
@@ -14,8 +16,15 @@ public class RecipeRestController {
         this.recipeService = recipeService;
     }
 
+    @GetMapping("/recipes")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Recipe> getAllRecipes() {
+        return recipeService.getAllRecipes();
+    }
+
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
+    // TODO: Add validation for the recipe object
     public Recipe createRecipe(@RequestBody Recipe recipe) {
         return recipeService.createRecipe(recipe);
     }
