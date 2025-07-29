@@ -8,5 +8,6 @@ public interface RecipeService {
     List<Recipe> getAllRecipes();
     Recipe getRecipeById(String id);
     Recipe createRecipe(Recipe recipe);
+    Recipe updateRecipe(String id, Recipe recipe);
     void deleteRecipe(String id);
 }

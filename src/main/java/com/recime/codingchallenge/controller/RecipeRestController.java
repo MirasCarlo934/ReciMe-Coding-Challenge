@@ -35,6 +35,12 @@ public class RecipeRestController {
         return recipeService.createRecipe(recipe);
     }
 
+    @PatchMapping("/recipes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Recipe updateRecipe(@PathVariable String id, @RequestBody Recipe recipe) {
+        return recipeService.updateRecipe(id, recipe);
+    }
+
     @DeleteMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRecipe(@PathVariable String id) {

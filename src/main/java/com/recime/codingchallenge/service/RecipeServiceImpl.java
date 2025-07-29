@@ -1,5 +1,6 @@
 package com.recime.codingchallenge.service;
 
+import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,8 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     // TODO: Add handling for recipe not found
     public Recipe getRecipeById(String id) {
-        return recipeRepository.findById(id).orElse(null);
+        log.info("Fetching recipe with ID: {}", id);
+        return recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException(id));
     }
 
     @Override
@@ -40,6 +42,16 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe createRecipe(Recipe recipe) {
         log.info("Saving recipe: {}", recipe);
         return recipeRepository.save(recipe);
+    }
+
+    @Override
+    // TODO: Update only the fields that are provided in the request body
+    public Recipe updateRecipe(String id, Recipe recipe) {
+        log.info("Updating recipe with ID: {}", id);
+        Recipe origRecipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new RecipeNotFoundException(id));
+        origRecipe.updateWithNonNullFields(recipe);
+        return recipeRepository.save(origRecipe);
     }
 
     @Override

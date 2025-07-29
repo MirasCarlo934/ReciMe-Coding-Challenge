@@ -20,4 +20,26 @@ public class Recipe {
     private List<Ingredient> ingredients;
     @ElementCollection
     private List<String> instructions;
+
+    /**
+     * Updates the current recipe with the values from another recipe.
+     * This method only updates the fields that are non-null in the given recipe.
+     *
+     * @param recipe the recipe containing the new values
+     */
+    // TODO: It might be more relevant to have a RecipeDto for this operation
+    public void updateWithNonNullFields(Recipe recipe) {
+        if (recipe.title != null) {
+            this.title = recipe.title;
+        }
+        if (recipe.description != null) {
+            this.description = recipe.description;
+        }
+        if (recipe.ingredients != null) {
+            this.ingredients = recipe.ingredients;
+        }
+        if (recipe.instructions != null) {
+            this.instructions = recipe.instructions;
+        }
+    }
 }
