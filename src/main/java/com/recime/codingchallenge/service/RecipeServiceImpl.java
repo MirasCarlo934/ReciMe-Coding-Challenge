@@ -30,6 +30,13 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    // TODO: Add handling for recipe not found
+    public Recipe getRecipeById(String id) {
+        return recipeRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    // TODO: Add handling for duplicate recipes
     public Recipe createRecipe(Recipe recipe) {
         log.info("Saving recipe: {}", recipe);
         return recipeRepository.save(recipe);

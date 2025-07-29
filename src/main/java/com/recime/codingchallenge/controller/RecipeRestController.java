@@ -22,6 +22,12 @@ public class RecipeRestController {
         return recipeService.getAllRecipes();
     }
 
+    @GetMapping("/recipes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Recipe getRecipeById(@PathVariable String id) {
+        return recipeService.getRecipeById(id);
+    }
+
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
     // TODO: Add validation for the recipe object

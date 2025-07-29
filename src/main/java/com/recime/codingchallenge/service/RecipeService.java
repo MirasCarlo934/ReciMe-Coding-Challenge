@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface RecipeService {
     List<Recipe> getAllRecipes();
+    Recipe getRecipeById(String id);
     Recipe createRecipe(Recipe recipe);
     void deleteRecipe(String id);
 }
