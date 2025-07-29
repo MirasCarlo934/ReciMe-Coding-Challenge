@@ -4,4 +4,5 @@ import com.recime.codingchallenge.model.Recipe;
 
 public interface RecipeService {
     Recipe createRecipe(Recipe recipe);
+    void deleteRecipe(String id);
 }

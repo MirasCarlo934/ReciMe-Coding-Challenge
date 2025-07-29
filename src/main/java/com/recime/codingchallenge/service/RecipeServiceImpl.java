@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service("recipeService")
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
@@ -21,5 +23,11 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe createRecipe(Recipe recipe) {
         log.info("Saving recipe: {}", recipe);
         return recipeRepository.save(recipe);
+    }
+
+    @Override
+    public void deleteRecipe(String id) {
+        log.info("Deleting recipe with ID: {}", id);
+        recipeRepository.deleteById(id);
     }
 }
