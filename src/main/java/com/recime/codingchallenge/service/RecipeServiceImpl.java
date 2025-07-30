@@ -30,21 +30,18 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    // TODO: Add handling for recipe not found
     public Recipe getRecipeById(String id) {
         log.info("Fetching recipe with ID: {}", id);
         return recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException(id));
     }
 
     @Override
-    // TODO: Add handling for duplicate recipes
     public Recipe createRecipe(RecipeDto recipeDto) {
         log.info("Saving recipe: {}", recipeDto);
         return recipeRepository.save(Recipe.from(recipeDto));
     }
 
     @Override
-    // TODO: Update only the fields that are provided in the request body
     public Recipe updateRecipe(String id, UpdateRecipeDto recipeDto) {
         log.info("Updating recipe with ID: {}", id);
         Recipe origRecipe = recipeRepository.findById(id)
