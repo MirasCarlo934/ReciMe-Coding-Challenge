@@ -39,8 +39,8 @@ public class RecipeRestController {
 
     @PatchMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Recipe updateRecipe(@PathVariable String id, @Valid @RequestBody UpdateRecipeDto recipeDto) {
-        return recipeService.updateRecipe(id, recipeDto);
+    public Recipe updateRecipe(@PathVariable String id, @Valid @RequestBody UpdateRecipeDto updateRecipeDto) {
+        return recipeService.updateRecipe(id, updateRecipeDto);
     }
 
     @DeleteMapping("/recipes/{id}")

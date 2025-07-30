@@ -7,3 +7,6 @@ stored _as-is_ as described in the recipe upon creation)
 different ingredients or instructions.
 3. There is no checking for duplicate recipes. This is to allow users to create similar recipes with slight variations. 
 This is also the current implementation in the ReciMe app.
+
+### On being "vegetarian"
+It is assumed that a recipe is vegetarian if all of its ingredients are vegetarian.

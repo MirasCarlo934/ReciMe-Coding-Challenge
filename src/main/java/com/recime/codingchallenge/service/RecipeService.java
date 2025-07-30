@@ -10,6 +10,6 @@ public interface RecipeService {
     List<Recipe> getAllRecipes();
     Recipe getRecipeById(String id);
     Recipe createRecipe(CreateRecipeDto createRecipeDto);
-    Recipe updateRecipe(String id, UpdateRecipeDto recipeDto);
+    Recipe updateRecipe(String id, UpdateRecipeDto updateRecipeDto);
     void deleteRecipe(String id);
 }

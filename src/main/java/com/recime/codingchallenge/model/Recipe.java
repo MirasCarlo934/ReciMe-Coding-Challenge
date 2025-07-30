@@ -28,6 +28,12 @@ public class Recipe {
     private List<String> instructions;
     private int servings;
 
+    /**
+     * Checks if the recipe is vegetarian.
+     * A recipe is considered vegetarian if all its ingredients are vegetarian.
+     *
+     * @return true if all ingredients are vegetarian, false otherwise
+     */
     public boolean isVegetarian() {
         return ingredients.stream().allMatch(Ingredient::isVegetarian);
     }
@@ -36,25 +42,31 @@ public class Recipe {
      * Updates the current recipe with the values from another recipe.
      * This method only updates the fields that are non-null in the given recipe.
      *
-     * @param recipeDto the recipe containing the new values
+     * @param updateRecipeDto the DTO containing the new values
      */
-    public void updateWithNonNullFields(UpdateRecipeDto recipeDto) {
-        if (recipeDto.getTitle() != null) {
-            this.title = recipeDto.getTitle();
+    public void updateWithNonNullFields(UpdateRecipeDto updateRecipeDto) {
+        if (updateRecipeDto.getTitle() != null) {
+            this.title = updateRecipeDto.getTitle();
         }
-        if (recipeDto.getDescription() != null) {
-            this.description = recipeDto.getDescription();
+        if (updateRecipeDto.getDescription() != null) {
+            this.description = updateRecipeDto.getDescription();
         }
-        if (recipeDto.getIngredients() != null && !recipeDto.getIngredients().isEmpty()) {
-            this.ingredients = recipeDto.getIngredients().stream()
+        if (updateRecipeDto.getIngredients() != null && !updateRecipeDto.getIngredients().isEmpty()) {
+            this.ingredients = updateRecipeDto.getIngredients().stream()
                 .map(Ingredient::from)
                 .collect(Collectors.toList());
         }
-        if (recipeDto.getInstructions() != null && !recipeDto.getInstructions().isEmpty()) {
-            this.instructions = recipeDto.getInstructions();
+        if (updateRecipeDto.getInstructions() != null && !updateRecipeDto.getInstructions().isEmpty()) {
+            this.instructions = updateRecipeDto.getInstructions();
         }
     }
 
+    /**
+     * Creates a Recipe instance from a CreateRecipeDto.
+     *
+     * @param createRecipeDto the DTO containing recipe data
+     * @return a new Recipe instance
+     */
     public static Recipe from(CreateRecipeDto createRecipeDto) {
         return Recipe.builder()
                 .title(createRecipeDto.getTitle())

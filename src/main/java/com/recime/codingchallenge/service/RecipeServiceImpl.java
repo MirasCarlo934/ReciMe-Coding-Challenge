@@ -42,11 +42,11 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe updateRecipe(String id, UpdateRecipeDto recipeDto) {
+    public Recipe updateRecipe(String id, UpdateRecipeDto updateRecipeDto) {
         log.info("Updating recipe with ID: {}", id);
         Recipe origRecipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RecipeNotFoundException(id));
-        origRecipe.updateWithNonNullFields(recipeDto);
+        origRecipe.updateWithNonNullFields(updateRecipeDto);
         return recipeRepository.save(origRecipe);
     }
 
