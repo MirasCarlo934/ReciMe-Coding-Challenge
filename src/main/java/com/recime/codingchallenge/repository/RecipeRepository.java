@@ -16,14 +16,14 @@ public interface RecipeRepository extends JpaRepository<Recipe, String> {
                   "         SELECT COUNT(DISTINCT pattern) FROM unnest(string_to_array(:includeIngredients, ',')) AS pattern " +
                   "         WHERE EXISTS (" +
                   "             SELECT 1 FROM recipe_ingredients ri " +
-                  "             WHERE ri.recipe_id = r.id AND ri.name ~ pattern" +
+                  "             WHERE ri.recipe_id = r.id AND ri.name = pattern" +
                   "         )" +
                   "     )) " +
                   "AND (COALESCE(array_length(string_to_array(:excludeIngredients, ','), 1), 0) = 0 OR " +
                   "     NOT EXISTS (" +
                   "         SELECT 1 FROM recipe_ingredients ri, " +
                   "                unnest(string_to_array(:excludeIngredients, ',')) AS pattern " +
-                  "         WHERE ri.recipe_id = r.id AND ri.name ~ pattern" +
+                  "         WHERE ri.recipe_id = r.id AND ri.name = pattern" +
                   "     ))",
            nativeQuery = true)
     List<Recipe> findRecipesWithCriteria(
