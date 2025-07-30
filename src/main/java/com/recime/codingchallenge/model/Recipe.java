@@ -1,15 +1,19 @@
 package com.recime.codingchallenge.model;
 
+import com.recime.codingchallenge.dto.RecipeDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ElementCollection;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
+@Builder
 public class Recipe {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
@@ -20,6 +24,11 @@ public class Recipe {
     private List<Ingredient> ingredients;
     @ElementCollection
     private List<String> instructions;
+    private int servings;
+
+    public boolean isVegetarian() {
+        return ingredients.stream().allMatch(Ingredient::isVegetarian);
+    }
 
     /**
      * Updates the current recipe with the values from another recipe.
@@ -41,5 +50,16 @@ public class Recipe {
         if (recipe.instructions != null) {
             this.instructions = recipe.instructions;
         }
+    }
+
+    public static Recipe from(RecipeDto recipeDto) {
+        return Recipe.builder()
+            .title(recipeDto.getTitle())
+            .description(recipeDto.getDescription())
+            .ingredients(recipeDto.getIngredients().stream()
+                    .map(Ingredient::from)
+                    .collect(Collectors.toList()))
+            .instructions(recipeDto.getInstructions())
+            .build();
     }
 }

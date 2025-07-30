@@ -1,5 +1,6 @@
 package com.recime.codingchallenge.service;
 
+import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.repository.RecipeRepository;
@@ -36,9 +37,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     // TODO: Add handling for duplicate recipes
-    public Recipe createRecipe(Recipe recipe) {
-        log.info("Saving recipe: {}", recipe);
-        return recipeRepository.save(recipe);
+    public Recipe createRecipe(RecipeDto recipeDto) {
+        log.info("Saving recipe: {}", recipeDto);
+        return recipeRepository.save(Recipe.from(recipeDto));
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.recime.codingchallenge.controller;
 
+import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.service.RecipeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +32,8 @@ public class RecipeRestController {
 
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
-    // TODO: Add validation for the recipe object
-    public Recipe createRecipe(@RequestBody Recipe recipe) {
-        return recipeService.createRecipe(recipe);
+    public Recipe createRecipe(@Valid @RequestBody RecipeDto recipeDto) {
+        return recipeService.createRecipe(recipeDto);
     }
 
     @PatchMapping("/recipes/{id}")
