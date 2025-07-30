@@ -9,7 +9,6 @@ import com.recime.codingchallenge.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,11 +23,8 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<Recipe> getAllRecipes() {
-        // Convert Iterable to List since it's the industry standard return type for a collection of objects
         log.info("Fetching all recipes from the repository");
-        List<Recipe> recipes = new ArrayList<>();
-        recipeRepository.findAll().forEach(recipes::add);
-        return recipes;
+        return recipeRepository.findAll();
     }
 
     @Override
@@ -62,12 +58,12 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> searchRecipes(RecipeSearchCriteria searchCriteria) {
         log.info("Searching recipes with criteria: {}", searchCriteria);
 
-        List<Recipe> recipes = new ArrayList<>();
-        recipeRepository.findAll().forEach(recipes::add);
+        // Apply repository-level filter (servings only) using JPQL
+        List<Recipe> recipes = recipeRepository.findRecipesWithCriteria(searchCriteria.getServings());
 
+        // Apply all other filters at application level
         return recipes.stream()
                 .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
-                .filter(r -> searchCriteria.getServings() == null || r.getServings() == searchCriteria.getServings())
                 .filter(r -> searchCriteria.getIncludeIngredients() == null || searchCriteria.getIncludeIngredients().isEmpty() ||
                         (r.getIngredients() != null && searchCriteria.getIncludeIngredients().stream().allMatch(inc ->
                                 r.getIngredients().stream().anyMatch(ing -> ing.getName().equalsIgnoreCase(inc)))))
@@ -76,8 +72,8 @@ public class RecipeServiceImpl implements RecipeService {
                                 r.getIngredients().stream().anyMatch(ing -> ing.getName().equalsIgnoreCase(exc)))))
                 .filter(r -> searchCriteria.getInstructions() == null || searchCriteria.getInstructions().isEmpty() ||
                         (r.getInstructions() != null && searchCriteria.getInstructions().stream().allMatch(searchTerm ->
-                                r.getInstructions().stream().anyMatch(instr ->
-                                        instr.toLowerCase().contains(searchTerm.toLowerCase())))))
+                                r.getInstructions().stream().anyMatch(instruction ->
+                                        instruction.toLowerCase().contains(searchTerm.toLowerCase())))))
                 .collect(Collectors.toList());
     }
 }
