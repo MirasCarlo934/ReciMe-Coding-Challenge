@@ -1,6 +1,7 @@
 package com.recime.codingchallenge.service;
 
 import com.recime.codingchallenge.dto.CreateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
@@ -58,24 +59,23 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> searchRecipes(Boolean vegetarian, Integer servings, List<String> includeIngredients, List<String> excludeIngredients, List<String> instructions) {
-        log.info("Searching recipes with filters - vegetarian: {}, servings: {}, includeIngredients: {}, excludeIngredients: {}, instructions: {}",
-                 vegetarian, servings, includeIngredients, excludeIngredients, instructions);
+    public List<Recipe> searchRecipes(RecipeSearchCriteria searchCriteria) {
+        log.info("Searching recipes with criteria: {}", searchCriteria);
 
         List<Recipe> recipes = new ArrayList<>();
         recipeRepository.findAll().forEach(recipes::add);
 
         return recipes.stream()
-                .filter(r -> vegetarian == null || r.isVegetarian() == vegetarian)
-                .filter(r -> servings == null || r.getServings() == servings)
-                .filter(r -> includeIngredients == null || includeIngredients.isEmpty() ||
-                        (r.getIngredients() != null && includeIngredients.stream().allMatch(inc ->
+                .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
+                .filter(r -> searchCriteria.getServings() == null || r.getServings() == searchCriteria.getServings())
+                .filter(r -> searchCriteria.getIncludeIngredients() == null || searchCriteria.getIncludeIngredients().isEmpty() ||
+                        (r.getIngredients() != null && searchCriteria.getIncludeIngredients().stream().allMatch(inc ->
                                 r.getIngredients().stream().anyMatch(ing -> ing.getName().equalsIgnoreCase(inc)))))
-                .filter(r -> excludeIngredients == null || excludeIngredients.isEmpty() ||
-                        (r.getIngredients() != null && excludeIngredients.stream().noneMatch(exc ->
+                .filter(r -> searchCriteria.getExcludeIngredients() == null || searchCriteria.getExcludeIngredients().isEmpty() ||
+                        (r.getIngredients() != null && searchCriteria.getExcludeIngredients().stream().noneMatch(exc ->
                                 r.getIngredients().stream().anyMatch(ing -> ing.getName().equalsIgnoreCase(exc)))))
-                .filter(r -> instructions == null || instructions.isEmpty() ||
-                        (r.getInstructions() != null && instructions.stream().allMatch(searchTerm ->
+                .filter(r -> searchCriteria.getInstructions() == null || searchCriteria.getInstructions().isEmpty() ||
+                        (r.getInstructions() != null && searchCriteria.getInstructions().stream().allMatch(searchTerm ->
                                 r.getInstructions().stream().anyMatch(instr ->
                                         instr.toLowerCase().contains(searchTerm.toLowerCase())))))
                 .collect(Collectors.toList());

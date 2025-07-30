@@ -1,6 +1,7 @@
 package com.recime.codingchallenge.controller;
 
 import com.recime.codingchallenge.dto.CreateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.service.RecipeService;
@@ -28,13 +29,18 @@ public class RecipeRestController {
             @RequestParam(value = "excludeIngredients", required = false) List<String> excludeIngredients,
             @RequestParam(value = "instructions", required = false) List<String> instructions
     ) {
-        if (vegetarian == null && servings == null &&
-            (includeIngredients == null || includeIngredients.isEmpty()) &&
-            (excludeIngredients == null || excludeIngredients.isEmpty()) &&
-            (instructions == null || instructions.isEmpty())) {
+        RecipeSearchCriteria searchCriteria = RecipeSearchCriteria.builder()
+                .vegetarian(vegetarian)
+                .servings(servings)
+                .includeIngredients(includeIngredients)
+                .excludeIngredients(excludeIngredients)
+                .instructions(instructions)
+                .build();
+
+        if (searchCriteria.isEmpty()) {
             return recipeService.getAllRecipes();
         }
-        return recipeService.searchRecipes(vegetarian, servings, includeIngredients, excludeIngredients, instructions);
+        return recipeService.searchRecipes(searchCriteria);
     }
 
     @GetMapping("/recipes/{id}")

@@ -1,6 +1,7 @@
 package com.recime.codingchallenge.service;
 
 import com.recime.codingchallenge.dto.CreateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import com.recime.codingchallenge.model.Recipe;
 
@@ -12,5 +13,5 @@ public interface RecipeService {
     Recipe createRecipe(CreateRecipeDto createRecipeDto);
     Recipe updateRecipe(String id, UpdateRecipeDto updateRecipeDto);
     void deleteRecipe(String id);
-    List<Recipe> searchRecipes(Boolean vegetarian, Integer servings, List<String> includeIngredients, List<String> excludeIngredients, List<String> instructions);
+    List<Recipe> searchRecipes(RecipeSearchCriteria searchCriteria);
 }
