@@ -58,18 +58,22 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> searchRecipes(RecipeSearchCriteria searchCriteria) {
         log.info("Searching recipes with criteria: {}", searchCriteria);
 
-        // Apply repository-level filter (servings only) using JPQL
-        List<Recipe> recipes = recipeRepository.findRecipesWithCriteria(searchCriteria.getServings());
+        // Convert ingredient lists to comma-separated strings for the native query
+        String includeIngredientsStr = searchCriteria.getIncludeIngredients() != null && !searchCriteria.getIncludeIngredients().isEmpty()
+                ? String.join(",", searchCriteria.getIncludeIngredients()) : null;
+        String excludeIngredientsStr = searchCriteria.getExcludeIngredients() != null && !searchCriteria.getExcludeIngredients().isEmpty()
+                ? String.join(",", searchCriteria.getExcludeIngredients()) : null;
 
-        // Apply all other filters at application level using regex
+        // Apply repository-level filters (servings and ingredients) using native SQL
+        List<Recipe> recipes = recipeRepository.findRecipesWithCriteria(
+                searchCriteria.getServings(),
+                includeIngredientsStr,
+                excludeIngredientsStr
+        );
+
+        // Apply remaining filters at application level
         return recipes.stream()
                 .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
-                .filter(r -> searchCriteria.getIncludeIngredients() == null || searchCriteria.getIncludeIngredients().isEmpty() ||
-                        (r.getIngredients() != null && searchCriteria.getIncludeIngredients().stream().allMatch(regexPattern ->
-                                r.getIngredients().stream().anyMatch(ing -> ing.getName().matches(regexPattern)))))
-                .filter(r -> searchCriteria.getExcludeIngredients() == null || searchCriteria.getExcludeIngredients().isEmpty() ||
-                        (r.getIngredients() != null && searchCriteria.getExcludeIngredients().stream().noneMatch(regexPattern ->
-                                r.getIngredients().stream().anyMatch(ing -> ing.getName().matches(regexPattern)))))
                 .filter(r -> searchCriteria.getIncludeInstructions() == null || searchCriteria.getIncludeInstructions().isEmpty() ||
                         (r.getInstructions() != null && searchCriteria.getIncludeInstructions().stream().allMatch(regexPattern ->
                                 r.getInstructions().stream().anyMatch(instruction -> instruction.matches(regexPattern)))))
