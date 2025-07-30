@@ -1,5 +1,5 @@
 -- Sample seed data for recipes
-INSERT INTO recipes (id, title, description, servings) VALUES
+INSERT INTO recipe (id, title, description, servings) VALUES
 ('809389cf-8785-4956-ab79-53b66b911f4f', 'Pork Adobo', 'The classic Filipino dish', 4),
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Vegetable Stir Fry', 'Quick and healthy vegetable dish', 2),
 ('b2c3d4e5-f6g7-8901-bcde-f23456789012', 'Spaghetti Carbonara', 'Classic Italian pasta dish', 4)
