@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # this will not be safe on higher environments, particularly production
   datasource:
     url: jdbc:postgresql://localhost:5432/recime_db
     username: recime_user
