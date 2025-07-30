@@ -58,28 +58,28 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> searchRecipes(RecipeSearchCriteria searchCriteria) {
         log.info("Searching recipes with criteria: {}", searchCriteria);
 
-        // Convert ingredient lists to comma-separated strings for the native query
+        // Convert ingredient and instruction lists to comma-separated strings for the native query
         String includeIngredientsStr = searchCriteria.getIncludeIngredients() != null && !searchCriteria.getIncludeIngredients().isEmpty()
                 ? String.join(",", searchCriteria.getIncludeIngredients()) : null;
         String excludeIngredientsStr = searchCriteria.getExcludeIngredients() != null && !searchCriteria.getExcludeIngredients().isEmpty()
                 ? String.join(",", searchCriteria.getExcludeIngredients()) : null;
+        String includeInstructionsStr = searchCriteria.getIncludeInstructions() != null && !searchCriteria.getIncludeInstructions().isEmpty()
+                ? String.join(",", searchCriteria.getIncludeInstructions()) : null;
+        String excludeInstructionsStr = searchCriteria.getExcludeInstructions() != null && !searchCriteria.getExcludeInstructions().isEmpty()
+                ? String.join(",", searchCriteria.getExcludeInstructions()) : null;
 
-        // Apply repository-level filters (servings and ingredients) using native SQL
+        // Apply repository-level filters (servings, ingredients, and instructions) using native SQL
         List<Recipe> recipes = recipeRepository.findRecipesWithCriteria(
                 searchCriteria.getServings(),
                 includeIngredientsStr,
-                excludeIngredientsStr
+                excludeIngredientsStr,
+                includeInstructionsStr,
+                excludeInstructionsStr
         );
 
         // Apply remaining filters at application level
         return recipes.stream()
                 .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
-                .filter(r -> searchCriteria.getIncludeInstructions() == null || searchCriteria.getIncludeInstructions().isEmpty() ||
-                        (r.getInstructions() != null && searchCriteria.getIncludeInstructions().stream().allMatch(regexPattern ->
-                                r.getInstructions().stream().anyMatch(instruction -> instruction.matches(regexPattern)))))
-                .filter(r -> searchCriteria.getExcludeInstructions() == null || searchCriteria.getExcludeInstructions().isEmpty() ||
-                        (r.getInstructions() != null && searchCriteria.getExcludeInstructions().stream().noneMatch(regexPattern ->
-                                r.getInstructions().stream().anyMatch(instruction -> instruction.matches(regexPattern)))))
                 .collect(Collectors.toList());
     }
 }
