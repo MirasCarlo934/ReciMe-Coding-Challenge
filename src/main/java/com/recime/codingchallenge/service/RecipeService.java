@@ -12,4 +12,5 @@ public interface RecipeService {
     Recipe createRecipe(CreateRecipeDto createRecipeDto);
     Recipe updateRecipe(String id, UpdateRecipeDto updateRecipeDto);
     void deleteRecipe(String id);
+    List<Recipe> searchRecipes(Boolean vegetarian, Integer servings, List<String> includeIngredients, List<String> excludeIngredients, List<String> instructions);
 }

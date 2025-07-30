@@ -21,8 +21,20 @@ public class RecipeRestController {
 
     @GetMapping("/recipes")
     @ResponseStatus(HttpStatus.OK)
-    public List<Recipe> getAllRecipes() {
-        return recipeService.getAllRecipes();
+    public List<Recipe> getRecipes(
+            @RequestParam(value = "vegetarian", required = false) Boolean vegetarian,
+            @RequestParam(value = "servings", required = false) Integer servings,
+            @RequestParam(value = "includeIngredients", required = false) List<String> includeIngredients,
+            @RequestParam(value = "excludeIngredients", required = false) List<String> excludeIngredients,
+            @RequestParam(value = "instructions", required = false) List<String> instructions
+    ) {
+        if (vegetarian == null && servings == null &&
+            (includeIngredients == null || includeIngredients.isEmpty()) &&
+            (excludeIngredients == null || excludeIngredients.isEmpty()) &&
+            (instructions == null || instructions.isEmpty())) {
+            return recipeService.getAllRecipes();
+        }
+        return recipeService.searchRecipes(vegetarian, servings, includeIngredients, excludeIngredients, instructions);
     }
 
     @GetMapping("/recipes/{id}")
