@@ -1,11 +1,15 @@
 package com.recime.codingchallenge.dto;
 
+import com.recime.codingchallenge.model.Ingredient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import lombok.Data;
 
+// TODO this might have to be split into another DTO specific for response body
 @Data
+@Builder
 public class IngredientDto {
     @Positive(message = "Amount must be a positive number")
     private float amount;
@@ -14,4 +18,13 @@ public class IngredientDto {
     private String name;
     @NotNull(message = "Vegetarian status cannot be null")
     private Boolean vegetarian; // using Boolean to catch null/missing value
+
+    public static IngredientDto from(Ingredient ingredient) {
+        return new IngredientDto(
+                ingredient.getAmount(),
+                ingredient.getUnit(),
+                ingredient.getName(),
+                ingredient.isVegetarian()
+        );
+    }
 }

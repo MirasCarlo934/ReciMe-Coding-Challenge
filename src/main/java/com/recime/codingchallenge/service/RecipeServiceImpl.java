@@ -1,6 +1,7 @@
 package com.recime.codingchallenge.service;
 
 import com.recime.codingchallenge.dto.CreateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
@@ -22,30 +23,36 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> getAllRecipes() {
+    public List<RecipeDto> getAllRecipes() {
         log.info("Fetching all recipes from the repository");
-        return recipeRepository.findAll();
+        return recipeRepository.findAll().stream()
+                .map(RecipeDto::from)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Recipe getRecipeById(String id) {
+    public RecipeDto getRecipeById(String id) {
         log.info("Fetching recipe with ID: {}", id);
-        return recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException(id));
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new RecipeNotFoundException(id));
+        return RecipeDto.from(recipe);
     }
 
     @Override
-    public Recipe createRecipe(CreateRecipeDto createRecipeDto) {
+    public RecipeDto createRecipe(CreateRecipeDto createRecipeDto) {
         log.info("Saving recipe: {}", createRecipeDto);
-        return recipeRepository.save(Recipe.from(createRecipeDto));
+        Recipe savedRecipe = recipeRepository.save(Recipe.from(createRecipeDto));
+        return RecipeDto.from(savedRecipe);
     }
 
     @Override
-    public Recipe updateRecipe(String id, UpdateRecipeDto updateRecipeDto) {
+    public RecipeDto updateRecipe(String id, UpdateRecipeDto updateRecipeDto) {
         log.info("Updating recipe with ID: {}", id);
         Recipe origRecipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RecipeNotFoundException(id));
         origRecipe.updateWithNonNullFields(updateRecipeDto);
-        return recipeRepository.save(origRecipe);
+        Recipe updatedRecipe = recipeRepository.save(origRecipe);
+        return RecipeDto.from(updatedRecipe);
     }
 
     @Override
@@ -55,7 +62,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> searchRecipes(RecipeSearchCriteria searchCriteria) {
+    public List<RecipeDto> searchRecipes(RecipeSearchCriteria searchCriteria) {
         log.info("Searching recipes with criteria: {}", searchCriteria);
 
         // Convert ingredient and instruction lists to comma-separated strings for the native query
@@ -77,9 +84,10 @@ public class RecipeServiceImpl implements RecipeService {
                 excludeInstructionsStr
         );
 
-        // Apply remaining filters at application level
+        // Apply remaining filters at application level and convert to DTOs
         return recipes.stream()
                 .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
+                .map(RecipeDto::from)
                 .collect(Collectors.toList());
     }
 }
