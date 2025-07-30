@@ -27,14 +27,16 @@ public class RecipeRestController {
             @RequestParam(value = "servings", required = false) Integer servings,
             @RequestParam(value = "includeIngredients", required = false) List<String> includeIngredients,
             @RequestParam(value = "excludeIngredients", required = false) List<String> excludeIngredients,
-            @RequestParam(value = "instructions", required = false) List<String> instructions
+            @RequestParam(value = "includeInstructions", required = false) List<String> includeInstructions,
+            @RequestParam(value = "excludeInstructions", required = false) List<String> excludeInstructions
     ) {
         RecipeSearchCriteria searchCriteria = RecipeSearchCriteria.builder()
                 .vegetarian(vegetarian)
                 .servings(servings)
                 .includeIngredients(includeIngredients)
                 .excludeIngredients(excludeIngredients)
-                .instructions(instructions)
+                .includeInstructions(includeInstructions)
+                .excludeInstructions(excludeInstructions)
                 .build();
 
         if (searchCriteria.isEmpty()) {
