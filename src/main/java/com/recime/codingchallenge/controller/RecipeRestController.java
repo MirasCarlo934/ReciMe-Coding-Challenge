@@ -1,6 +1,7 @@
 package com.recime.codingchallenge.controller;
 
 import com.recime.codingchallenge.dto.RecipeDto;
+import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.service.RecipeService;
 import jakarta.validation.Valid;
@@ -38,8 +39,8 @@ public class RecipeRestController {
 
     @PatchMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Recipe updateRecipe(@PathVariable String id, @RequestBody Recipe recipe) {
-        return recipeService.updateRecipe(id, recipe);
+    public Recipe updateRecipe(@PathVariable String id, @Valid @RequestBody UpdateRecipeDto recipeDto) {
+        return recipeService.updateRecipe(id, recipeDto);
     }
 
     @DeleteMapping("/recipes/{id}")

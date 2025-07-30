@@ -1,6 +1,7 @@
 package com.recime.codingchallenge.service;
 
 import com.recime.codingchallenge.dto.RecipeDto;
+import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.repository.RecipeRepository;
@@ -44,11 +45,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     // TODO: Update only the fields that are provided in the request body
-    public Recipe updateRecipe(String id, Recipe recipe) {
+    public Recipe updateRecipe(String id, UpdateRecipeDto recipeDto) {
         log.info("Updating recipe with ID: {}", id);
         Recipe origRecipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RecipeNotFoundException(id));
-        origRecipe.updateWithNonNullFields(recipe);
+        origRecipe.updateWithNonNullFields(recipeDto);
         return recipeRepository.save(origRecipe);
     }
 

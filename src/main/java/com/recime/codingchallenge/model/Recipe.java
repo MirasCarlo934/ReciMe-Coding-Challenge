@@ -1,12 +1,12 @@
 package com.recime.codingchallenge.model;
 
 import com.recime.codingchallenge.dto.RecipeDto;
+import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ElementCollection;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // needed for JPA
+@AllArgsConstructor // needed for @Builder
 public class Recipe {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
@@ -34,32 +36,34 @@ public class Recipe {
      * Updates the current recipe with the values from another recipe.
      * This method only updates the fields that are non-null in the given recipe.
      *
-     * @param recipe the recipe containing the new values
+     * @param recipeDto the recipe containing the new values
      */
-    // TODO: It might be more relevant to have a RecipeDto for this operation
-    public void updateWithNonNullFields(Recipe recipe) {
-        if (recipe.title != null) {
-            this.title = recipe.title;
+    public void updateWithNonNullFields(UpdateRecipeDto recipeDto) {
+        if (recipeDto.getTitle() != null) {
+            this.title = recipeDto.getTitle();
         }
-        if (recipe.description != null) {
-            this.description = recipe.description;
+        if (recipeDto.getDescription() != null) {
+            this.description = recipeDto.getDescription();
         }
-        if (recipe.ingredients != null) {
-            this.ingredients = recipe.ingredients;
+        if (recipeDto.getIngredients() != null && !recipeDto.getIngredients().isEmpty()) {
+            this.ingredients = recipeDto.getIngredients().stream()
+                .map(Ingredient::from)
+                .collect(Collectors.toList());
         }
-        if (recipe.instructions != null) {
-            this.instructions = recipe.instructions;
+        if (recipeDto.getInstructions() != null && !recipeDto.getInstructions().isEmpty()) {
+            this.instructions = recipeDto.getInstructions();
         }
     }
 
     public static Recipe from(RecipeDto recipeDto) {
         return Recipe.builder()
-            .title(recipeDto.getTitle())
-            .description(recipeDto.getDescription())
-            .ingredients(recipeDto.getIngredients().stream()
-                    .map(Ingredient::from)
-                    .collect(Collectors.toList()))
-            .instructions(recipeDto.getInstructions())
-            .build();
+                .title(recipeDto.getTitle())
+                .description(recipeDto.getDescription())
+                .ingredients(recipeDto.getIngredients().stream()
+                        .map(Ingredient::from)
+                        .collect(Collectors.toList()))
+                .instructions(recipeDto.getInstructions())
+                .servings(recipeDto.getServings())
+                .build();
     }
 }
