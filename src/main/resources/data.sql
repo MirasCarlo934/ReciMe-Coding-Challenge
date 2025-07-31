@@ -1,3 +1,8 @@
+-- TODO: This might be dangerous, implement another way to check if ingredients/instructions exist
+DELETE FROM recipe_instructions;
+DELETE FROM recipe_ingredients;
+DELETE FROM recipe;
+
 -- Sample seed data for recipes
 INSERT INTO recipe (id, title, description, servings) VALUES
 ('809389cf-8785-4956-ab79-53b66b911f4f', 'Pork Adobo', 'The classic Filipino dish', 4),

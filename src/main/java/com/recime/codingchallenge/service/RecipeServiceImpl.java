@@ -64,6 +64,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    // TODO: Fix this method to be simpler
     public Page<RecipeDto> searchRecipes(RecipeSearchCriteria searchCriteria, Pageable pageable) {
         log.info("Searching recipes with criteria: {} and pagination: {}", searchCriteria, pageable);
 
@@ -77,26 +78,28 @@ public class RecipeServiceImpl implements RecipeService {
         String excludeInstructionsStr = searchCriteria.getExcludeInstructions() != null && !searchCriteria.getExcludeInstructions().isEmpty()
                 ? String.join(",", searchCriteria.getExcludeInstructions()) : null;
 
-        // Apply repository-level filters (servings, ingredients, and instructions) using native SQL
-        List<Recipe> recipes = recipeRepository.findRecipesWithCriteria(
+        // Use the paginated repository method
+        Page<Recipe> recipePage = recipeRepository.findRecipesWithCriteria(
                 searchCriteria.getServings(),
                 includeIngredientsStr,
                 excludeIngredientsStr,
                 includeInstructionsStr,
-                excludeInstructionsStr
+                excludeInstructionsStr,
+                pageable
         );
 
-        // Apply remaining filters at application level and convert to DTOs
-        List<RecipeDto> filteredRecipes = recipes.stream()
-                .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
-                .map(RecipeDto::from)
-                .collect(Collectors.toList());
+        // Apply vegetarian filter and convert to DTOs
+        if (searchCriteria.getVegetarian() != null) {
+            List<RecipeDto> filteredRecipes = recipePage.getContent().stream()
+                    .filter(r -> r.isVegetarian() == searchCriteria.getVegetarian())
+                    .map(RecipeDto::from)
+                    .collect(Collectors.toList());
 
-        // Manual pagination since we're using a native query
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), filteredRecipes.size());
-        List<RecipeDto> pageContent = filteredRecipes.subList(start, end);
+            // Create a new page with filtered content
+            return new PageImpl<>(filteredRecipes, pageable, filteredRecipes.size());
+        }
 
-        return new PageImpl<>(pageContent, pageable, filteredRecipes.size());
+        // No vegetarian filter needed, just convert to DTOs
+        return recipePage.map(RecipeDto::from);
     }
 }

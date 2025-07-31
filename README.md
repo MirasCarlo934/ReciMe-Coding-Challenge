@@ -156,11 +156,11 @@ consistent error responses across the application.
 
 ### #4: Database-Level Search
 The search functionality is delegated to the repository-layer for scalability. While it might be tempting to fetch all 
-recipes then implement Java Streams to filter the results, this would not be efficient for larger datasets and will 
+recipes then implement Java Streams to filter the results, this would not be scalable for larger datasets and will 
 rely heavily on application memory and compute power.
 
-While tradeoffs can be discussed (i.e. database performance vs application performance), it's generally good 
-practice to delegate functionality that can be handled by the database to the database itself.
+While tradeoffs can be discussed (e.g. database performance vs application performance, database query maintainability), 
+it's generally good practice to delegate functionality that can be handled by the database to the database itself.
 
 ## Assumptions Made
 1. The recipe exists as an isolated entity and does not have any dependencies on other entities. (i.e. ingredients are 
