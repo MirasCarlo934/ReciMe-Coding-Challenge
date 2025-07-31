@@ -14,13 +14,14 @@ import java.util.List;
 public class RecipeSearchCriteria {
     private Boolean vegetarian;
     private Integer servings;
-    private List<String> includeIngredients;  // now regex strings - ALL must be satisfied
-    private List<String> excludeIngredients;  // now regex strings - NONE must be satisfied
-    private List<String> includeInstructions; // now regex strings - ALL must be satisfied
-    private List<String> excludeInstructions; // now regex strings - NONE must be satisfied
+    private List<String> includeIngredients;
+    private List<String> excludeIngredients;
+    private List<String> includeInstructions;
+    private List<String> excludeInstructions;
 
     /**
      * Checks if all search criteria are empty/null, indicating no filtering is needed.
+     *
      * @return true if no search criteria are specified
      */
     public boolean isEmpty() {
