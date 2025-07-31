@@ -4,11 +4,11 @@ import com.recime.codingchallenge.exception.InvalidSortPropertyException;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,27 +18,30 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RecipeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ResponseEntity<ErrorResponseBody> handleRecipeNotFoundException(RecipeNotFoundException ex) {
+    public ErrorResponseBody handleRecipeNotFoundException(RecipeNotFoundException ex) {
         log.error(ex.getMessage(), ex);
-        return new ResponseEntity<>(new ErrorResponseBody(ex.getMessage()), HttpStatus.NOT_FOUND);
+        return new ErrorResponseBody(ex.getMessage());
     }
 
     @ExceptionHandler(InvalidSortPropertyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ResponseEntity<ErrorResponseBody> handleInvalidSortPropertyException(InvalidSortPropertyException ex) {
+    public ErrorResponseBody handleInvalidSortPropertyException(InvalidSortPropertyException ex) {
         log.error(ex.getMessage(), ex);
-        return new ResponseEntity<>(new ErrorResponseBody(ex.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ErrorResponseBody(ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
             errors.put(error.getField(), error.getDefaultMessage())
         );
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return errors;
     }
 
     public record ErrorResponseBody (String message) {}
