@@ -139,7 +139,7 @@ This is also the default implementation of Spring Data JPA for embedded objects.
 
 ### #2: API Design
 The API is designed to be RESTful, with the following endpoints:
-- `GET /recipes`: Retrieve all recipes, with optional query parameters for filtering
+- `GET /recipes`: Retrieve recipes, with pagination capability and optional query parameters for filtering
 - `GET /recipes/{id}`: Retrieve a specific recipe by its unique ID
 - `POST /recipes`: Create a new recipe
 - `PUT /recipes/{id}`: Update an existing recipe by its unique ID
