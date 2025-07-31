@@ -1,5 +1,6 @@
 package com.recime.codingchallenge.controller;
 
+import com.recime.codingchallenge.exception.InvalidSortPropertyException;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseBody> handleRecipeNotFoundException(RecipeNotFoundException ex) {
         log.error(ex.getMessage(), ex);
         return new ResponseEntity<>(new ErrorResponseBody(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidSortPropertyException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorResponseBody> handleInvalidSortPropertyException(InvalidSortPropertyException ex) {
+        log.error(ex.getMessage(), ex);
+        return new ResponseEntity<>(new ErrorResponseBody(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

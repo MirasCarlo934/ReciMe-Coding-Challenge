@@ -8,6 +8,9 @@ import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,11 +26,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeDto> getAllRecipes() {
-        log.info("Fetching all recipes from the repository");
-        return recipeRepository.findAll().stream()
-                .map(RecipeDto::from)
-                .collect(Collectors.toList());
+    public Page<RecipeDto> getAllRecipes(Pageable pageable) {
+        log.info("Fetching all recipes from the repository with pagination: {}", pageable);
+        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
+        return recipePage.map(RecipeDto::from);
     }
 
     @Override
@@ -62,8 +64,8 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeDto> searchRecipes(RecipeSearchCriteria searchCriteria) {
-        log.info("Searching recipes with criteria: {}", searchCriteria);
+    public Page<RecipeDto> searchRecipes(RecipeSearchCriteria searchCriteria, Pageable pageable) {
+        log.info("Searching recipes with criteria: {} and pagination: {}", searchCriteria, pageable);
 
         // Convert ingredient and instruction lists to comma-separated strings for the native query
         String includeIngredientsStr = searchCriteria.getIncludeIngredients() != null && !searchCriteria.getIncludeIngredients().isEmpty()
@@ -85,9 +87,16 @@ public class RecipeServiceImpl implements RecipeService {
         );
 
         // Apply remaining filters at application level and convert to DTOs
-        return recipes.stream()
+        List<RecipeDto> filteredRecipes = recipes.stream()
                 .filter(r -> searchCriteria.getVegetarian() == null || r.isVegetarian() == searchCriteria.getVegetarian())
                 .map(RecipeDto::from)
                 .collect(Collectors.toList());
+
+        // Manual pagination since we're using a native query
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredRecipes.size());
+        List<RecipeDto> pageContent = filteredRecipes.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, filteredRecipes.size());
     }
 }

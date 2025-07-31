@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // needed for JPA
 @AllArgsConstructor // needed for @Builder
 public class Recipe {
+    public static final List<String> ALLOWED_SORT_FIELDS = List.of("title", "servings", "description");
+
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
     private String id;

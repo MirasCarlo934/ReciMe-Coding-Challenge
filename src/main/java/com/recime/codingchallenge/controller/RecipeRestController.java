@@ -4,9 +4,15 @@ import com.recime.codingchallenge.dto.UpsertRecipeDto;
 import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
+import com.recime.codingchallenge.exception.InvalidSortPropertyException;
+import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.service.RecipeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +29,22 @@ public class RecipeRestController {
 
     @GetMapping("/recipes")
     @ResponseStatus(HttpStatus.OK)
-    public List<RecipeDto> getRecipes(
+    public Page<RecipeDto> getRecipes(
             @RequestParam(value = "vegetarian", required = false) Boolean vegetarian,
             @RequestParam(value = "servings", required = false) Integer servings,
             @RequestParam(value = "includeIngredients", required = false) List<String> includeIngredients,
             @RequestParam(value = "excludeIngredients", required = false) List<String> excludeIngredients,
             @RequestParam(value = "includeInstructions", required = false) List<String> includeInstructions,
-            @RequestParam(value = "excludeInstructions", required = false) List<String> excludeInstructions
+            @RequestParam(value = "excludeInstructions", required = false) List<String> excludeInstructions,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "title") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction
     ) {
+        if (!Recipe.ALLOWED_SORT_FIELDS.contains(sort)) {
+            throw new InvalidSortPropertyException(sort);
+        }
+
         RecipeSearchCriteria searchCriteria = RecipeSearchCriteria.builder()
                 .vegetarian(vegetarian)
                 .servings(servings)
@@ -40,10 +54,13 @@ public class RecipeRestController {
                 .excludeInstructions(excludeInstructions)
                 .build();
 
+        Pageable pageable = PageRequest.of(page, size,
+            Sort.by(Sort.Direction.fromString(direction), sort));
+
         if (searchCriteria.isEmpty()) {
-            return recipeService.getAllRecipes();
+            return recipeService.getAllRecipes(pageable);
         }
-        return recipeService.searchRecipes(searchCriteria);
+        return recipeService.searchRecipes(searchCriteria, pageable);
     }
 
     @GetMapping("/recipes/{id}")
