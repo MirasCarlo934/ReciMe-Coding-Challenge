@@ -10,5 +10,5 @@ import lombok.*;
 @AllArgsConstructor // needed for @Builder
 public class Instruction {
     private String instruction;
-    private int order;
+    private int step;
 }

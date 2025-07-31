@@ -36,7 +36,7 @@ INSERT INTO recipe_ingredients (recipe_id, name, amount, unit, vegetarian) VALUE
 ON CONFLICT DO NOTHING;
 
 -- Sample instructions for Pork Adobo
-INSERT INTO recipe_instructions (recipe_id, instructions, instructions_order) VALUES
+INSERT INTO recipe_instructions (recipe_id, instruction, step) VALUES
 ('809389cf-8785-4956-ab79-53b66b911f4f', 'Cut pork belly into chunks', 0),
 ('809389cf-8785-4956-ab79-53b66b911f4f', 'Marinate pork with soy sauce and vinegar', 1),
 ('809389cf-8785-4956-ab79-53b66b911f4f', 'Sauté garlic until fragrant', 2),
@@ -46,7 +46,7 @@ INSERT INTO recipe_instructions (recipe_id, instructions, instructions_order) VA
 ON CONFLICT DO NOTHING;
 
 -- Sample instructions for Vegetable Stir Fry
-INSERT INTO recipe_instructions (recipe_id, instructions, instructions_order) VALUES
+INSERT INTO recipe_instructions (recipe_id, instruction, step) VALUES
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Heat oil in a wok or large pan', 0),
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Add garlic and stir-fry for 30 seconds', 1),
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Add harder vegetables first (carrots, broccoli)', 2),
@@ -56,7 +56,7 @@ INSERT INTO recipe_instructions (recipe_id, instructions, instructions_order) VA
 ON CONFLICT DO NOTHING;
 
 -- Sample instructions for Spaghetti Carbonara
-INSERT INTO recipe_instructions (recipe_id, instructions, instructions_order) VALUES
+INSERT INTO recipe_instructions (recipe_id, instruction, step) VALUES
 ('b2c3d4e5-f6g7-8901-bcde-f23456789012', 'Cook spaghetti according to package instructions', 0),
 ('b2c3d4e5-f6g7-8901-bcde-f23456789012', 'Cook bacon until crispy, reserve fat', 1),
 ('b2c3d4e5-f6g7-8901-bcde-f23456789012', 'Beat eggs with grated parmesan and black pepper', 2),

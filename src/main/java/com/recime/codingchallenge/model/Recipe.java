@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ElementCollection;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +27,7 @@ public class Recipe {
     @ElementCollection
     private List<Ingredient> ingredients;
     @ElementCollection
-    private List<String> instructions;
+    private List<Instruction> instructions;
     private int servings;
 
     /**
@@ -36,6 +38,18 @@ public class Recipe {
      */
     public boolean isVegetarian() {
         return ingredients.stream().allMatch(Ingredient::isVegetarian);
+    }
+
+    /**
+     * Returns the list of instructions sorted by their order.
+     * This method ensures that the instructions are returned in the correct sequence.
+     *
+     * @return a sorted list of instructions
+     */
+    public List<Instruction> getInstructions() {
+        return instructions.stream()
+                .sorted(Comparator.comparingInt(Instruction::getStep))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -57,7 +71,7 @@ public class Recipe {
                 .collect(Collectors.toList());
         }
         if (updateRecipeDto.getInstructions() != null && !updateRecipeDto.getInstructions().isEmpty()) {
-            this.instructions = updateRecipeDto.getInstructions();
+            this.instructions = buildInstrucionsList(updateRecipeDto.getInstructions());
         }
     }
 
@@ -74,8 +88,23 @@ public class Recipe {
                 .ingredients(upsertRecipeDto.getIngredients().stream()
                         .map(Ingredient::from)
                         .collect(Collectors.toList()))
-                .instructions(upsertRecipeDto.getInstructions())
+                .instructions(buildInstrucionsList(upsertRecipeDto.getInstructions()))
                 .servings(upsertRecipeDto.getServings())
                 .build();
+    }
+
+    /**
+     * Builds a list of Instruction objects from a list of instruction strings.
+     * Each instruction string is assigned an order based on its position in the list.
+     *
+     * @param instructions the list of instruction strings
+     * @return a list of Instruction objects
+     */
+    private static List<Instruction> buildInstrucionsList(List<String> instructions) {
+        List<Instruction> instructionList = new ArrayList<>();
+        for (int i = 0; i < instructions.size(); i++) {
+            instructionList.add(new Instruction(instructions.get(i), i));
+        }
+        return instructionList;
     }
 }

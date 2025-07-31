@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS recipe_ingredients (
 -- Create the instructions table (for @ElementCollection)
 CREATE TABLE IF NOT EXISTS recipe_instructions (
     recipe_id VARCHAR(255) NOT NULL,
-    instructions TEXT NOT NULL,
-    instructions_order INTEGER NOT NULL,
+    instruction TEXT NOT NULL,
+    step INTEGER NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES recipe(id) ON DELETE CASCADE
 );
 

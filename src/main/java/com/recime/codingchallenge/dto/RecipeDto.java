@@ -1,5 +1,6 @@
 package com.recime.codingchallenge.dto;
 
+import com.recime.codingchallenge.model.Instruction;
 import com.recime.codingchallenge.model.Recipe;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +30,9 @@ public class RecipeDto {
                 .ingredients(recipe.getIngredients().stream()
                         .map(IngredientDto::from)
                         .collect(Collectors.toList()))
-                .instructions(recipe.getInstructions())
+                .instructions(recipe.getInstructions().stream()
+                        .map(Instruction::getInstruction)
+                        .collect(Collectors.toUnmodifiableList()))
                 .servings(recipe.getServings())
                 .vegetarian(recipe.isVegetarian())
                 .build();
