@@ -4,6 +4,7 @@ import com.recime.codingchallenge.dto.UpsertRecipeDto;
 import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
+import com.recime.codingchallenge.exception.InvalidSortDirectionException;
 import com.recime.codingchallenge.exception.InvalidSortPropertyException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.service.RecipeService;
@@ -54,8 +55,7 @@ public class RecipeRestController {
                 .excludeInstructions(excludeInstructions)
                 .build();
 
-        Pageable pageable = PageRequest.of(page, size,
-            Sort.by(Sort.Direction.fromString(direction), sort));
+        Pageable pageable = buildPageable(page, size, sort, direction);
 
         if (searchCriteria.isEmpty()) {
             return recipeService.getAllRecipes(pageable);
@@ -85,5 +85,16 @@ public class RecipeRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRecipe(@PathVariable String id) {
         recipeService.deleteRecipe(id);
+    }
+
+    private static Pageable buildPageable(int page, int size, String sort, String direction) {
+        Sort.Direction sortDirection;
+        try {
+            sortDirection = Sort.Direction.fromString(direction);
+        } catch (IllegalArgumentException e) {
+            // for catching invalid sort direction
+            throw new InvalidSortDirectionException(direction);
+        }
+        return PageRequest.of(page, size, Sort.by(sortDirection, sort));
     }
 }
