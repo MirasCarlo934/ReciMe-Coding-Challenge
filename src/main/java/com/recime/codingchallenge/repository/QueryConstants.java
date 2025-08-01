@@ -16,11 +16,11 @@ public class QueryConstants {
                  cardinality(string_to_array(:includeInstructions, ',')) = (
                      SELECT COUNT(*) FROM unnest(string_to_array(:includeInstructions, ',')) AS pattern
                      WHERE EXISTS (SELECT 1 FROM recipe_instructions ri
-                                   WHERE ri.recipe_id = r.id AND ri.instructions ~* pattern)))
+                                   WHERE ri.recipe_id = r.id AND ri.instruction ~* pattern)))
             AND (:excludeInstructions IS NULL OR
                  NOT EXISTS (SELECT 1 FROM unnest(string_to_array(:excludeInstructions, ',')) AS pattern
                              WHERE EXISTS (SELECT 1 FROM recipe_instructions ri
-                                          WHERE ri.recipe_id = r.id AND ri.instructions ~* pattern)))
+                                          WHERE ri.recipe_id = r.id AND ri.instruction ~* pattern)))
             """;
 
     static final String RECIPE_SEARCH_QUERY = """

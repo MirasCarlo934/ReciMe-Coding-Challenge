@@ -1,6 +1,6 @@
 package com.recime.codingchallenge.model;
 
-import com.recime.codingchallenge.dto.UpsertRecipeDto;
+import com.recime.codingchallenge.dto.CreateReplaceRecipeDto;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -80,18 +80,18 @@ public class Recipe {
     /**
      * Creates a Recipe instance from a CreateRecipeDto.
      *
-     * @param upsertRecipeDto the DTO containing recipe data
+     * @param createReplaceRecipeDto the DTO containing recipe data
      * @return a new Recipe instance
      */
-    public static Recipe from(UpsertRecipeDto upsertRecipeDto) {
+    public static Recipe from(CreateReplaceRecipeDto createReplaceRecipeDto) {
         return Recipe.builder()
-                .title(upsertRecipeDto.getTitle())
-                .description(upsertRecipeDto.getDescription())
-                .ingredients(upsertRecipeDto.getIngredients().stream()
+                .title(createReplaceRecipeDto.getTitle())
+                .description(createReplaceRecipeDto.getDescription())
+                .ingredients(createReplaceRecipeDto.getIngredients().stream()
                         .map(Ingredient::from)
                         .collect(Collectors.toList()))
-                .instructions(buildInstrucionsList(upsertRecipeDto.getInstructions()))
-                .servings(upsertRecipeDto.getServings())
+                .instructions(buildInstrucionsList(createReplaceRecipeDto.getInstructions()))
+                .servings(createReplaceRecipeDto.getServings())
                 .build();
     }
 

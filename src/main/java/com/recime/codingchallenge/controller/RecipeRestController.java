@@ -1,6 +1,6 @@
 package com.recime.codingchallenge.controller;
 
-import com.recime.codingchallenge.dto.UpsertRecipeDto;
+import com.recime.codingchallenge.dto.CreateReplaceRecipeDto;
 import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
@@ -71,14 +71,20 @@ public class RecipeRestController {
 
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
-    public RecipeDto createRecipe(@Valid @RequestBody UpsertRecipeDto upsertRecipeDto) {
-        return recipeService.createRecipe(upsertRecipeDto);
+    public RecipeDto createRecipe(@Valid @RequestBody CreateReplaceRecipeDto createReplaceRecipeDto) {
+        return recipeService.createRecipe(createReplaceRecipeDto);
     }
 
     @PatchMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.OK)
     public RecipeDto updateRecipe(@PathVariable String id, @Valid @RequestBody UpdateRecipeDto updateRecipeDto) {
         return recipeService.updateRecipe(id, updateRecipeDto);
+    }
+
+    @PutMapping("/recipes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeDto replaceRecipe(@PathVariable String id, @Valid @RequestBody CreateReplaceRecipeDto createReplaceRecipeDto) {
+        return recipeService.replaceRecipe(id, createReplaceRecipeDto);
     }
 
     @DeleteMapping("/recipes/{id}")

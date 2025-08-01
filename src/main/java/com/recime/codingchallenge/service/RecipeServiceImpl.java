@@ -1,6 +1,6 @@
 package com.recime.codingchallenge.service;
 
-import com.recime.codingchallenge.dto.UpsertRecipeDto;
+import com.recime.codingchallenge.dto.CreateReplaceRecipeDto;
 import com.recime.codingchallenge.dto.RecipeDto;
 import com.recime.codingchallenge.dto.RecipeSearchCriteria;
 import com.recime.codingchallenge.dto.UpdateRecipeDto;
@@ -41,9 +41,9 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeDto createRecipe(UpsertRecipeDto upsertRecipeDto) {
-        log.info("Saving recipe: {}", upsertRecipeDto);
-        Recipe savedRecipe = recipeRepository.save(Recipe.from(upsertRecipeDto));
+    public RecipeDto createRecipe(CreateReplaceRecipeDto createReplaceRecipeDto) {
+        log.info("Saving recipe: {}", createReplaceRecipeDto);
+        Recipe savedRecipe = recipeRepository.save(Recipe.from(createReplaceRecipeDto));
         return RecipeDto.from(savedRecipe);
     }
 
@@ -55,6 +55,18 @@ public class RecipeServiceImpl implements RecipeService {
         origRecipe.updateWithNonNullFields(updateRecipeDto);
         Recipe updatedRecipe = recipeRepository.save(origRecipe);
         return RecipeDto.from(updatedRecipe);
+    }
+
+    @Override
+    public RecipeDto replaceRecipe(String id, CreateReplaceRecipeDto createReplaceRecipeDto) {
+        log.info("Replacing recipe with ID: {}", id);
+        if (!recipeRepository.existsById(id)) {
+            throw new RecipeNotFoundException(id);
+        }
+        Recipe newRecipe = Recipe.from(createReplaceRecipeDto);
+        newRecipe.setId(id);
+        Recipe savedRecipe = recipeRepository.save(newRecipe);
+        return RecipeDto.from(savedRecipe);
     }
 
     @Override
