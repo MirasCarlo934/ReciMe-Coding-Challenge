@@ -142,7 +142,7 @@ The API is designed to be RESTful, with the following endpoints:
 - `GET /recipes`: Retrieve recipes, with pagination capability and optional query parameters for filtering
 - `GET /recipes/{id}`: Retrieve a specific recipe by its unique ID
 - `POST /recipes`: Create a new recipe
-- `PUT /recipes/{id}`: Update an existing recipe by its unique ID
+- `PUT /recipes/{id}`: Replace an existing recipe by its unique ID
 - `PATCH /recipes/{id}`: Partially update an existing recipe by its unique ID
 - `DELETE /recipes/{id}`: Delete a specific recipe by its unique ID
 
