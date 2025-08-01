@@ -1,18 +1,18 @@
 package com.recime.codingchallenge.service;
 
-import com.recime.codingchallenge.dto.CreateReplaceRecipeDto;
-import com.recime.codingchallenge.dto.RecipeDto;
-import com.recime.codingchallenge.dto.RecipeSearchCriteria;
-import com.recime.codingchallenge.dto.UpdateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeRequestDto;
+import com.recime.codingchallenge.dto.RecipeResponseDto;
+import com.recime.codingchallenge.dto.RecipeSearchRequestDto;
+import com.recime.codingchallenge.dto.RecipeUpdateRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface RecipeService {
-    Page<RecipeDto> getAllRecipes(Pageable pageable);
-    RecipeDto getRecipeById(String id);
-    RecipeDto createRecipe(CreateReplaceRecipeDto createReplaceRecipeDto);
-    RecipeDto updateRecipe(String id, UpdateRecipeDto updateRecipeDto);
-    RecipeDto replaceRecipe(String id, CreateReplaceRecipeDto createReplaceRecipeDto);
+    Page<RecipeResponseDto> getAllRecipes(Pageable pageable);
+    RecipeResponseDto getRecipeById(String id);
+    RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto);
+    RecipeResponseDto updateRecipe(String id, RecipeUpdateRequestDto recipeUpdateRequestDto);
+    RecipeResponseDto replaceRecipe(String id, RecipeRequestDto recipeRequestDto);
     void deleteRecipe(String id);
-    Page<RecipeDto> searchRecipes(RecipeSearchCriteria searchCriteria, Pageable pageable);
+    Page<RecipeResponseDto> searchRecipes(RecipeSearchRequestDto recipeSearchRequestDto, Pageable pageable);
 }

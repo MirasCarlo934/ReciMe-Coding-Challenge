@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeSearchCriteria {
+public class RecipeSearchRequestDto {
     private Boolean vegetarian;
     private Integer servings;
     private List<String> includeIngredients;

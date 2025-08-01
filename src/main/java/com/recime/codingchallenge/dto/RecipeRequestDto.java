@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CreateReplaceRecipeDto {
+public class RecipeRequestDto {
     @NotBlank(message = "Title cannot be blank")
     private String title;
     @NotBlank(message = "Description cannot be blank")

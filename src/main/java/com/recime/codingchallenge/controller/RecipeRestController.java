@@ -1,9 +1,9 @@
 package com.recime.codingchallenge.controller;
 
-import com.recime.codingchallenge.dto.CreateReplaceRecipeDto;
-import com.recime.codingchallenge.dto.RecipeDto;
-import com.recime.codingchallenge.dto.RecipeSearchCriteria;
-import com.recime.codingchallenge.dto.UpdateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeRequestDto;
+import com.recime.codingchallenge.dto.RecipeResponseDto;
+import com.recime.codingchallenge.dto.RecipeSearchRequestDto;
+import com.recime.codingchallenge.dto.RecipeUpdateRequestDto;
 import com.recime.codingchallenge.exception.InvalidSortDirectionException;
 import com.recime.codingchallenge.exception.InvalidSortPropertyException;
 import com.recime.codingchallenge.model.Recipe;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// TODO: implement PUT
 @RestController
 public class RecipeRestController {
     private final RecipeService recipeService;
@@ -30,7 +29,7 @@ public class RecipeRestController {
 
     @GetMapping("/recipes")
     @ResponseStatus(HttpStatus.OK)
-    public Page<RecipeDto> getRecipes(
+    public Page<RecipeResponseDto> getRecipes(
             @RequestParam(value = "vegetarian", required = false) Boolean vegetarian,
             @RequestParam(value = "servings", required = false) Integer servings,
             @RequestParam(value = "includeIngredients", required = false) List<String> includeIngredients,
@@ -46,7 +45,7 @@ public class RecipeRestController {
             throw new InvalidSortPropertyException(sort);
         }
 
-        RecipeSearchCriteria searchCriteria = RecipeSearchCriteria.builder()
+        RecipeSearchRequestDto recipeSearchRequestDto = RecipeSearchRequestDto.builder()
                 .vegetarian(vegetarian)
                 .servings(servings)
                 .includeIngredients(includeIngredients)
@@ -57,34 +56,34 @@ public class RecipeRestController {
 
         Pageable pageable = buildPageable(page, size, sort, direction);
 
-        if (searchCriteria.isEmpty()) {
+        if (recipeSearchRequestDto.isEmpty()) {
             return recipeService.getAllRecipes(pageable);
         }
-        return recipeService.searchRecipes(searchCriteria, pageable);
+        return recipeService.searchRecipes(recipeSearchRequestDto, pageable);
     }
 
     @GetMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RecipeDto getRecipeById(@PathVariable String id) {
+    public RecipeResponseDto getRecipeById(@PathVariable String id) {
         return recipeService.getRecipeById(id);
     }
 
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
-    public RecipeDto createRecipe(@Valid @RequestBody CreateReplaceRecipeDto createReplaceRecipeDto) {
-        return recipeService.createRecipe(createReplaceRecipeDto);
+    public RecipeResponseDto createRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto) {
+        return recipeService.createRecipe(recipeRequestDto);
     }
 
     @PatchMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RecipeDto updateRecipe(@PathVariable String id, @Valid @RequestBody UpdateRecipeDto updateRecipeDto) {
-        return recipeService.updateRecipe(id, updateRecipeDto);
+    public RecipeResponseDto updateRecipe(@PathVariable String id, @Valid @RequestBody RecipeUpdateRequestDto recipeUpdateRequestDto) {
+        return recipeService.updateRecipe(id, recipeUpdateRequestDto);
     }
 
     @PutMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RecipeDto replaceRecipe(@PathVariable String id, @Valid @RequestBody CreateReplaceRecipeDto createReplaceRecipeDto) {
-        return recipeService.replaceRecipe(id, createReplaceRecipeDto);
+    public RecipeResponseDto replaceRecipe(@PathVariable String id, @Valid @RequestBody RecipeRequestDto recipeRequestDto) {
+        return recipeService.replaceRecipe(id, recipeRequestDto);
     }
 
     @DeleteMapping("/recipes/{id}")

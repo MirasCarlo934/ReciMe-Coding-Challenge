@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 
-// TODO this might have to be split into another DTO specific for response body
 @Data
 @Builder
 public class IngredientDto {

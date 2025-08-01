@@ -1,9 +1,9 @@
 package com.recime.codingchallenge.service;
 
-import com.recime.codingchallenge.dto.CreateReplaceRecipeDto;
-import com.recime.codingchallenge.dto.RecipeDto;
-import com.recime.codingchallenge.dto.RecipeSearchCriteria;
-import com.recime.codingchallenge.dto.UpdateRecipeDto;
+import com.recime.codingchallenge.dto.RecipeRequestDto;
+import com.recime.codingchallenge.dto.RecipeResponseDto;
+import com.recime.codingchallenge.dto.RecipeSearchRequestDto;
+import com.recime.codingchallenge.dto.RecipeUpdateRequestDto;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import com.recime.codingchallenge.model.Recipe;
 import com.recime.codingchallenge.repository.RecipeRepository;
@@ -26,47 +26,47 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Page<RecipeDto> getAllRecipes(Pageable pageable) {
+    public Page<RecipeResponseDto> getAllRecipes(Pageable pageable) {
         log.info("Fetching all recipes from the repository with pagination: {}", pageable);
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
-        return recipePage.map(RecipeDto::from);
+        return recipePage.map(RecipeResponseDto::from);
     }
 
     @Override
-    public RecipeDto getRecipeById(String id) {
+    public RecipeResponseDto getRecipeById(String id) {
         log.info("Fetching recipe with ID: {}", id);
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RecipeNotFoundException(id));
-        return RecipeDto.from(recipe);
+        return RecipeResponseDto.from(recipe);
     }
 
     @Override
-    public RecipeDto createRecipe(CreateReplaceRecipeDto createReplaceRecipeDto) {
-        log.info("Saving recipe: {}", createReplaceRecipeDto);
-        Recipe savedRecipe = recipeRepository.save(Recipe.from(createReplaceRecipeDto));
-        return RecipeDto.from(savedRecipe);
+    public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto) {
+        log.info("Saving recipe: {}", recipeRequestDto);
+        Recipe savedRecipe = recipeRepository.save(Recipe.from(recipeRequestDto));
+        return RecipeResponseDto.from(savedRecipe);
     }
 
     @Override
-    public RecipeDto updateRecipe(String id, UpdateRecipeDto updateRecipeDto) {
+    public RecipeResponseDto updateRecipe(String id, RecipeUpdateRequestDto recipeUpdateRequestDto) {
         log.info("Updating recipe with ID: {}", id);
         Recipe origRecipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RecipeNotFoundException(id));
-        origRecipe.updateWithNonNullFields(updateRecipeDto);
+        origRecipe.updateWithNonNullFields(recipeUpdateRequestDto);
         Recipe updatedRecipe = recipeRepository.save(origRecipe);
-        return RecipeDto.from(updatedRecipe);
+        return RecipeResponseDto.from(updatedRecipe);
     }
 
     @Override
-    public RecipeDto replaceRecipe(String id, CreateReplaceRecipeDto createReplaceRecipeDto) {
+    public RecipeResponseDto replaceRecipe(String id, RecipeRequestDto recipeRequestDto) {
         log.info("Replacing recipe with ID: {}", id);
         if (!recipeRepository.existsById(id)) {
             throw new RecipeNotFoundException(id);
         }
-        Recipe newRecipe = Recipe.from(createReplaceRecipeDto);
+        Recipe newRecipe = Recipe.from(recipeRequestDto);
         newRecipe.setId(id);
         Recipe savedRecipe = recipeRepository.save(newRecipe);
-        return RecipeDto.from(savedRecipe);
+        return RecipeResponseDto.from(savedRecipe);
     }
 
     @Override
@@ -77,22 +77,22 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     // TODO: Fix this method to be simpler
-    public Page<RecipeDto> searchRecipes(RecipeSearchCriteria searchCriteria, Pageable pageable) {
-        log.info("Searching recipes with criteria: {} and pagination: {}", searchCriteria, pageable);
+    public Page<RecipeResponseDto> searchRecipes(RecipeSearchRequestDto recipeSearchRequestDto, Pageable pageable) {
+        log.info("Searching recipes with criteria: {} and pagination: {}", recipeSearchRequestDto, pageable);
 
         // Convert ingredient and instruction lists to comma-separated strings for the native query
-        String includeIngredientsStr = searchCriteria.getIncludeIngredients() != null && !searchCriteria.getIncludeIngredients().isEmpty()
-                ? String.join(",", searchCriteria.getIncludeIngredients()) : null;
-        String excludeIngredientsStr = searchCriteria.getExcludeIngredients() != null && !searchCriteria.getExcludeIngredients().isEmpty()
-                ? String.join(",", searchCriteria.getExcludeIngredients()) : null;
-        String includeInstructionsStr = searchCriteria.getIncludeInstructions() != null && !searchCriteria.getIncludeInstructions().isEmpty()
-                ? String.join(",", searchCriteria.getIncludeInstructions()) : null;
-        String excludeInstructionsStr = searchCriteria.getExcludeInstructions() != null && !searchCriteria.getExcludeInstructions().isEmpty()
-                ? String.join(",", searchCriteria.getExcludeInstructions()) : null;
+        String includeIngredientsStr = recipeSearchRequestDto.getIncludeIngredients() != null && !recipeSearchRequestDto.getIncludeIngredients().isEmpty()
+                ? String.join(",", recipeSearchRequestDto.getIncludeIngredients()) : null;
+        String excludeIngredientsStr = recipeSearchRequestDto.getExcludeIngredients() != null && !recipeSearchRequestDto.getExcludeIngredients().isEmpty()
+                ? String.join(",", recipeSearchRequestDto.getExcludeIngredients()) : null;
+        String includeInstructionsStr = recipeSearchRequestDto.getIncludeInstructions() != null && !recipeSearchRequestDto.getIncludeInstructions().isEmpty()
+                ? String.join(",", recipeSearchRequestDto.getIncludeInstructions()) : null;
+        String excludeInstructionsStr = recipeSearchRequestDto.getExcludeInstructions() != null && !recipeSearchRequestDto.getExcludeInstructions().isEmpty()
+                ? String.join(",", recipeSearchRequestDto.getExcludeInstructions()) : null;
 
         // Use the paginated repository method
         Page<Recipe> recipePage = recipeRepository.findRecipesWithCriteria(
-                searchCriteria.getServings(),
+                recipeSearchRequestDto.getServings(),
                 includeIngredientsStr,
                 excludeIngredientsStr,
                 includeInstructionsStr,
@@ -101,10 +101,10 @@ public class RecipeServiceImpl implements RecipeService {
         );
 
         // Apply vegetarian filter and convert to DTOs
-        if (searchCriteria.getVegetarian() != null) {
-            List<RecipeDto> filteredRecipes = recipePage.getContent().stream()
-                    .filter(r -> r.isVegetarian() == searchCriteria.getVegetarian())
-                    .map(RecipeDto::from)
+        if (recipeSearchRequestDto.getVegetarian() != null) {
+            List<RecipeResponseDto> filteredRecipes = recipePage.getContent().stream()
+                    .filter(r -> r.isVegetarian() == recipeSearchRequestDto.getVegetarian())
+                    .map(RecipeResponseDto::from)
                     .collect(Collectors.toList());
 
             // Create a new page with filtered content
@@ -112,6 +112,6 @@ public class RecipeServiceImpl implements RecipeService {
         }
 
         // No vegetarian filter needed, just convert to DTOs
-        return recipePage.map(RecipeDto::from);
+        return recipePage.map(RecipeResponseDto::from);
     }
 }

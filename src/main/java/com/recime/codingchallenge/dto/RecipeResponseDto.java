@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @Builder
-public class RecipeDto {
+public class RecipeResponseDto {
     private String id;
     private String title;
     private String description;
@@ -22,8 +22,8 @@ public class RecipeDto {
     private int servings;
     private boolean vegetarian;
 
-    public static RecipeDto from(Recipe recipe) {
-        return RecipeDto.builder()
+    public static RecipeResponseDto from(Recipe recipe) {
+        return RecipeResponseDto.builder()
                 .id(recipe.getId())
                 .title(recipe.getTitle())
                 .description(recipe.getDescription())
