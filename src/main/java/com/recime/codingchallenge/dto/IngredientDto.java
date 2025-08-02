@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * DTO used to represent an Ingredient entity in both request and response bodies in the API.
+ */
 @Data
 @Builder
 public class IngredientDto {

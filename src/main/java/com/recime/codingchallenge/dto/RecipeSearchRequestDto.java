@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * DTO used to represent search criteria for recipes.
+ * This DTO is used when searching for recipes via the API.
+ */
 @Data
 @Builder
 @NoArgsConstructor

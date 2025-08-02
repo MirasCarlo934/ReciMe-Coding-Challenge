@@ -8,6 +8,10 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO used to represent a Recipe as a request body.
+ * This DTO is used when creating/replacing a recipe via the API.
+ */
 @Data
 public class RecipeRequestDto {
     @NotBlank(message = "Title cannot be blank")
