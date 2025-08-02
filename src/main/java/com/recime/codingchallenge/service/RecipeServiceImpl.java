@@ -72,6 +72,9 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public void deleteRecipe(String id) {
         log.info("Deleting recipe with ID: {}", id);
+        if (!recipeRepository.existsById(id)) {
+            throw new RecipeNotFoundException(id);
+        }
         recipeRepository.deleteById(id);
     }
 
