@@ -11,7 +11,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
   app:
-    image: cpmiras/recime-coding-challenge:latest
+    image: cpmiras/recime-coding-challenge:latest # This is available on Docker Hub
     container_name: recime_app
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/recime_db
