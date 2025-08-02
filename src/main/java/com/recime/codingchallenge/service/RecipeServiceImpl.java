@@ -83,30 +83,59 @@ public class RecipeServiceImpl implements RecipeService {
         log.info("Searching recipes with criteria: {} and pagination: {}", recipeSearchRequestDto, pageable);
 
         // Search recipes based on the provided criteria
+        List<Recipe> recipes = searchRecipesFromDb(recipeSearchRequestDto);
+
+        // Separate filtering by vegetarian status since this is an application-level derived field
+        List<Recipe> filteredRecipes = filterRecipesByVegetarian(recipeSearchRequestDto, recipes);
+
+        // Apply pagination
+        return paginateResults(pageable, filteredRecipes);
+    }
+
+    private List<Recipe> searchRecipesFromDb(RecipeSearchRequestDto recipeSearchRequestDto) {
         String includeIngredientsStr = toCommaSeparatedString(recipeSearchRequestDto.getIncludeIngredients());
         String excludeIngredientsStr = toCommaSeparatedString(recipeSearchRequestDto.getExcludeIngredients());
         String includeInstructionsStr = toCommaSeparatedString(recipeSearchRequestDto.getIncludeInstructions());
         String excludeInstructionsStr = toCommaSeparatedString(recipeSearchRequestDto.getExcludeInstructions());
-        Page<Recipe> recipePage = recipeRepository.findRecipesWithCriteria(
+
+        // Get all recipes matching the criteria
+        return recipeRepository.findRecipesWithCriteria(
                 recipeSearchRequestDto.getServings(),
                 includeIngredientsStr,
                 excludeIngredientsStr,
                 includeInstructionsStr,
-                excludeInstructionsStr,
-                pageable
+                excludeInstructionsStr
         );
+    }
 
-        // Apply vegetarian filter and convert to DTOs
+    private static List<Recipe> filterRecipesByVegetarian(RecipeSearchRequestDto recipeSearchRequestDto, List<Recipe> recipes) {
+        List<Recipe> filteredRecipes = recipes;
         if (recipeSearchRequestDto.getVegetarian() != null) {
-            List<RecipeResponseDto> filteredRecipes = recipePage.getContent().stream()
+            filteredRecipes = recipes.stream()
                     .filter(r -> r.isVegetarian() == recipeSearchRequestDto.getVegetarian())
-                    .map(RecipeResponseDto::from)
                     .collect(Collectors.toList());
-            return new PageImpl<>(filteredRecipes, pageable, filteredRecipes.size());
+        }
+        return filteredRecipes;
+    }
+
+    private static PageImpl<RecipeResponseDto> paginateResults(Pageable pageable, List<Recipe> filteredRecipes) {
+        int totalElements = filteredRecipes.size();
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+
+        List<Recipe> pagedRecipes;
+        if (startItem >= totalElements) {
+            pagedRecipes = List.of();
+        } else {
+            int endItem = Math.min(startItem + pageSize, totalElements);
+            pagedRecipes = filteredRecipes.subList(startItem, endItem);
         }
 
-        // No vegetarian filter needed, just convert to DTOs
-        return recipePage.map(RecipeResponseDto::from);
+        List<RecipeResponseDto> pagedResponseDtos = pagedRecipes.stream()
+                .map(RecipeResponseDto::from)
+                .collect(Collectors.toList());
+        return new PageImpl<>(pagedResponseDtos, pageable, totalElements);
     }
 
     private static String toCommaSeparatedString(List<String> list) {
