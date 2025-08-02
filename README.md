@@ -1,6 +1,6 @@
 # ReciMe-Coding-Challenge
 
-**Carlo's entry for the ReciMe coding challenge.**
+Carlo's entry for the ReciMe coding challenge.
 
 ## Table of Contents
 
@@ -8,6 +8,7 @@
 - [Local Development Setup](#local-development-setup)
   - [Option 1: Using Docker](#option-1-using-docker)
   - [Option 2: Manual Setup](#option-2-manual-setup)
+  - [Building the Application](#building-the-application)
 - [Design Decisions](#design-decisions)
   - [#1: Data Model](#1-data-model)
     - [On being "vegetarian"](#on-being-vegetarian)
@@ -66,7 +67,7 @@ password: recime_password
 
 Or you can define your own database credentials in the `src/main/resources/application.yml` file.
 
-## Building the Application
+### Building the Application
 To build the application as a Docker image, run the following command in the project root:
 
 ```bash
