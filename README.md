@@ -43,7 +43,7 @@ The Recipe entity is designed to be simple and straightforward, with the followi
       "name": "String",
       "amount": "Numeric",
       "unit": "String",
-      "isVegetarian": "Boolean"
+      "vegetarian": "Boolean"
     }
   ],
   "instructions": [
@@ -117,10 +117,30 @@ The Recipe entity is designed to be simple and straightforward, with the followi
 
 The following ERD describes the data model in the database:
 
-![Diagram](docs/diagrams/ERD.png)
+![Diagram](docs/diagrams/ERD-current.png)
 
-> ⚠️ **Note:** The `vegetarian` field is a derived field and is not stored in the database. It is true if and only if 
-> all ingredients are vegetarian. See more in the [Assumptions Made](#assumptions-made) section.
+> ⚠️ **Note:** The `vegetarian` field is a derived field and is not stored in the database. It is true if and only if
+> all ingredients are vegetarian. See more in the [On being "vegetarian"](#on-being-vegetarian) section below.
+
+#### On being "vegetarian"
+
+**It is assumed that a recipe is vegetarian if all of its ingredients are vegetarian.**
+
+An earlier option was to simply declare the entire recipe as vegetarian or not regardless of the ingredients, delegating
+the decision to the application client. This, however, would have an impact on the recipe update use case where the
+ingredients can be added or removed. When a vegetarian recipe is updated to include a non-vegetarian ingredient, the
+application client would have to be aware of this and update the vegetarian field of the recipe accordingly. This would
+be an unnecessary complexity for the client and would require additional logic to handle this case.
+
+As such, the decision was made to derive the vegetarian field from the ingredients. This way, the recipe is always
+consistent with its ingredients, and the application client does not have to worry about updating the vegetarian field
+when the ingredients change.
+
+Another question would be: _"Why should the application client be the one to determine if an ingredient is vegetarian or 
+not?"_ This was done for simplicity because determining "vegetarian-ness" actually turned out to be a difficult problem. 
+For this, see more on the [Possible Enhancements](#possible-enhancements) section below.
+
+[//]: # (TODO: transfer here the vegetarian discussions)
 
 #### Entity vs Embeddable
 
@@ -162,7 +182,7 @@ rely heavily on application memory and compute power.
 While tradeoffs can be discussed (e.g. database performance vs application performance, database query maintainability), 
 it's generally good practice to delegate functionality that can be handled by the database to the database itself.
 
-## Assumptions Made
+## Other Assumptions Made
 1. The recipe exists as an isolated entity and does not have any dependencies on other entities. (i.e. ingredients are 
 stored _as-is_ as described in the recipe upon creation)
 2. Recipes are identified solely by their unique ID. This is to allow multiple recipes for the same dish but with 
@@ -170,15 +190,34 @@ different ingredients or instructions.
 3. There is no checking for duplicate recipes. This is to allow users to create similar recipes with slight variations. 
 This is also the current implementation in the ReciMe app.
 
-### On being "vegetarian"
-**It is assumed that a recipe is vegetarian if all of its ingredients are vegetarian.** 
+## Possible Enhancements
 
-An earlier option was to simply declare the entire recipe as vegetarian or not regardless of the ingredients, delegating 
-the decision to the application client. This, however, would have an impact on the recipe update use case where the 
-ingredients can be added or removed. When a vegetarian recipe is updated to include a non-vegetarian ingredient, the 
-application client would have to be aware of this and update the vegetarian field of the recipe accordingly. This would
-be an unnecessary complexity for the client and would require additional logic to handle this case.
+### Determining "Vegetarian-ness"
+Determining if an ingredient is vegetarian or not can be a complex problem. A possible enhancement would be to create a 
+master table of ingredients with their vegetarian status, and then use this list to determine if a recipe is vegetarian 
+or not. See below diagram for a possible future data model with a separate `Ingredient` entity which contains the 
+vegetarian flag:
 
-As such, the decision was made to derive the vegetarian field from the ingredients. This way, the recipe is always
-consistent with its ingredients, and the application client does not have to worry about updating the vegetarian field
-when the ingredients change.
+![Diagram](docs/diagrams/ERD-future.png)
+
+Maintaining this master table is another complex problem. It would require a comprehensive list of ingredients and 
+their vegetarian status. But _who_ will maintain this list? 
+
+One option is to have an admin interface where an admin can add or update ingredients and their vegetarian status. But 
+this will require tremendous human effort and will not capture all possible ingredients out there.
+
+Another option is to utilize AI solutions which can serve as a knowledge base for ingredients and their vegetarian status. 
+This would require an AI model that can accurately determine if an ingredient is vegetarian or not, and this is a 
+complex problem in itself.
+
+Suffice it to say, determining "vegetarian-ness" is a difficult problem that requires careful consideration and design 
+which may be too much for the scope of this coding challenge.
+
+### Testing
+The current implementation does not include unit tests or integration tests. While this is not a requirement in this 
+coding challenge, reliable testing scripts is paramount for maintaining quality in production-ready applications that 
+are continuously developed over time.
+
+### Database Schema Management
+Requirements may require changes to the data model, and by extension, the database schema. Tools like Liquibase can be 
+implemented to manage database schema changes in a structured and maintainable way.
