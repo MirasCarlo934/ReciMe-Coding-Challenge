@@ -1,5 +1,17 @@
 # ReciMe-Coding-Challenge
 
+To run the application:
+
+```bash
+docker compose up
+```
+
+Or if you want to run it in detached mode:
+
+```bash
+docker compose up -d
+```
+
 ## Local Development Setup
 For local development, you can use the following steps in order to set up the environment:
 
@@ -7,13 +19,13 @@ For local development, you can use the following steps in order to set up the en
 This is the fastest way to get started. On the project root, run the following command to start the application:
 
 ```bash
-docker-compose up
+docker compose -f docker-compose-local-env.yml up
 ```
 
 Or if you want to run it in detached mode:
 
 ```bash
-docker-compose up -d
+docker compose -f docker-compose-local-env.yml up -d
 ```
 
 ### Option 2: Manual Setup

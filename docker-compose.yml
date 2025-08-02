@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:14.17
-    container_name: recime_postgres
+    container_name: recime_db
     environment:
       POSTGRES_DB: recime_db
       POSTGRES_USER: recime_user
@@ -10,6 +10,16 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+  app:
+    image: cpmiras/recime-coding-challenge:latest
+    container_name: recime_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/recime_db
+      SPRING_DATASOURCE_USERNAME: recime_user
+      SPRING_DATASOURCE_PASSWORD: recime_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+    ports:
+      - "8080:8080"
 
 volumes:
   db_data:
