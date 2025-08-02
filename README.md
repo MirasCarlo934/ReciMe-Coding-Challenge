@@ -1,5 +1,31 @@
 # ReciMe-Coding-Challenge
 
+**Carlo's entry for the ReciMe coding challenge.**
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Local Development Setup](#local-development-setup)
+  - [Option 1: Using Docker](#option-1-using-docker)
+  - [Option 2: Manual Setup](#option-2-manual-setup)
+- [Design Decisions](#design-decisions)
+  - [#1: Data Model](#1-data-model)
+    - [On being "vegetarian"](#on-being-vegetarian)
+    - [Entity vs Embeddable](#entity-vs-embeddable)
+    - [Normalized vs Denormalized](#normalized-vs-denormalized)
+  - [#2: API Design](#2-api-design)
+  - [#3: Error Handling](#3-error-handling)
+  - [#4: Database-Level Search](#4-database-level-search)
+  - [#5: Sortable Properties](#5-sortable-properties)
+- [Other Assumptions Made](#other-assumptions-made)
+- [Possible Future Enhancements](#possible-future-enhancements)
+  - [Determining "Vegetarian-ness"](#determining-vegetarian-ness)
+  - [Testing](#testing)
+  - [Database Schema Management](#database-schema-management)
+- [Author](#author)
+
+## Quick Start
+
 To run the application:
 
 ```bash
@@ -134,9 +160,9 @@ The following ERD describes the data model in the database:
 > ⚠️ **Note:** The `vegetarian` field is a derived field and is not stored in the database. It is true if and only if
 > all ingredients are vegetarian. See more in the [On being "vegetarian"](#on-being-vegetarian) section below.
 
-#### On being "vegetarian"
+#### On being "vegetarian":
 
-**It is assumed that a recipe is vegetarian if all of its ingredients are vegetarian.**
+**_It is assumed that a recipe is vegetarian if all of its ingredients are vegetarian._**
 
 An earlier option was to simply declare the entire recipe as vegetarian or not regardless of the ingredients, delegating
 the decision to the application client. This, however, would have an impact on the recipe update use case where the
@@ -152,14 +178,12 @@ Another question would be: _"Why should the application client be the one to det
 not?"_ This was done for simplicity because determining "vegetarian-ness" actually turned out to be a difficult problem. 
 For this, see more on the [Possible Enhancements](#possible-enhancements) section below.
 
-[//]: # (TODO: transfer here the vegetarian discussions)
-
-#### Entity vs Embeddable
+#### Entity vs Embeddable:
 
 A design decision of note is to implement Ingredients and Instructions as embeddable objects within the Recipe entity. 
 Conceptually, an ingredient and an instruction are not entities on their own, but rather part of a recipe.
 
-#### Normalized vs Denormalized
+#### Normalized vs Denormalized:
 
 The database tables are designed to be normalized, with the embedded Ingredients and Instructions stored in their own 
 tables.
@@ -194,6 +218,13 @@ rely heavily on application memory and compute power.
 While tradeoffs can be discussed (e.g. database performance vs application performance, database query maintainability), 
 it's generally good practice to delegate functionality that can be handled by the database to the database itself.
 
+### #5: Sortable Properties
+Notice that using `ingredients` and `instructions` as sort properties is not allowed as it needs further refinement. 
+_How_ will recipes be sorted by their ingredients? Is it by name using the first ingredient? Or by the number of 
+ingredients? How about for instructions?
+
+As such, it's decided to not allow sorting by these properties.
+
 ## Other Assumptions Made
 1. The recipe exists as an isolated entity and does not have any dependencies on other entities. (i.e. ingredients are 
 stored _as-is_ as described in the recipe upon creation)
@@ -202,10 +233,10 @@ different ingredients or instructions.
 3. There is no checking for duplicate recipes. This is to allow users to create similar recipes with slight variations. 
 This is also the current implementation in the ReciMe app.
 
-## Possible Enhancements
+## Possible Future Enhancements
 
 ### Determining "Vegetarian-ness"
-Determining if an ingredient is vegetarian or not can be a complex problem. A possible enhancement would be to create a 
+Determining if an ingredient is vegetarian or not is a complex problem. A possible enhancement would be to create a 
 master table of ingredients with their vegetarian status, and then use this list to determine if a recipe is vegetarian 
 or not. See below diagram for a possible future data model with a separate `Ingredient` entity which contains the 
 vegetarian flag:
@@ -223,7 +254,8 @@ This would require an AI model that can accurately determine if an ingredient is
 complex problem in itself.
 
 Suffice it to say, determining "vegetarian-ness" is a difficult problem that requires careful consideration and design 
-which may be too much for the scope of this coding challenge.
+which may be too much for the scope of this coding challenge. As such, the current implementation simply delegates the 
+decision to the application client.
 
 ### Testing
 The current implementation does not include unit tests or integration tests. While this is not a requirement in this 
@@ -233,3 +265,7 @@ are continuously developed over time.
 ### Database Schema Management
 Requirements may require changes to the data model, and by extension, the database schema. Tools like Liquibase can be 
 implemented to manage database schema changes in a structured and maintainable way.
+
+## Author
+
+**Author:** @MirasCarlo934
