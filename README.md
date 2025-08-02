@@ -42,6 +42,12 @@ docker compose up -d
 The Postman collection is available in the `docs/postman` directory. You can import it into Postman to test the API 
 endpoints.
 
+> ⚠️ **Note:** If the docker compose command fails (e.g. platform mismatch), you can try running the application 
+> manually by running the following commands in the project root:
+> ```bash
+> mvn clean install && java -jar target/recime-coding-challenge-1.0.0-SNAPSHOT.jar
+> ```
+
 ## Local Development Setup
 For local development, you can use the following steps in order to set up the environment:
 
