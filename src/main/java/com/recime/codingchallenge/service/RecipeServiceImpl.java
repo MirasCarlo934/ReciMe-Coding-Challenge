@@ -76,21 +76,14 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    // TODO: Fix this method to be simpler
     public Page<RecipeResponseDto> searchRecipes(RecipeSearchRequestDto recipeSearchRequestDto, Pageable pageable) {
         log.info("Searching recipes with criteria: {} and pagination: {}", recipeSearchRequestDto, pageable);
 
-        // Convert ingredient and instruction lists to comma-separated strings for the native query
-        String includeIngredientsStr = recipeSearchRequestDto.getIncludeIngredients() != null && !recipeSearchRequestDto.getIncludeIngredients().isEmpty()
-                ? String.join(",", recipeSearchRequestDto.getIncludeIngredients()) : null;
-        String excludeIngredientsStr = recipeSearchRequestDto.getExcludeIngredients() != null && !recipeSearchRequestDto.getExcludeIngredients().isEmpty()
-                ? String.join(",", recipeSearchRequestDto.getExcludeIngredients()) : null;
-        String includeInstructionsStr = recipeSearchRequestDto.getIncludeInstructions() != null && !recipeSearchRequestDto.getIncludeInstructions().isEmpty()
-                ? String.join(",", recipeSearchRequestDto.getIncludeInstructions()) : null;
-        String excludeInstructionsStr = recipeSearchRequestDto.getExcludeInstructions() != null && !recipeSearchRequestDto.getExcludeInstructions().isEmpty()
-                ? String.join(",", recipeSearchRequestDto.getExcludeInstructions()) : null;
-
-        // Use the paginated repository method
+        // Search recipes based on the provided criteria
+        String includeIngredientsStr = toCommaSeparatedString(recipeSearchRequestDto.getIncludeIngredients());
+        String excludeIngredientsStr = toCommaSeparatedString(recipeSearchRequestDto.getExcludeIngredients());
+        String includeInstructionsStr = toCommaSeparatedString(recipeSearchRequestDto.getIncludeInstructions());
+        String excludeInstructionsStr = toCommaSeparatedString(recipeSearchRequestDto.getExcludeInstructions());
         Page<Recipe> recipePage = recipeRepository.findRecipesWithCriteria(
                 recipeSearchRequestDto.getServings(),
                 includeIngredientsStr,
@@ -106,12 +99,16 @@ public class RecipeServiceImpl implements RecipeService {
                     .filter(r -> r.isVegetarian() == recipeSearchRequestDto.getVegetarian())
                     .map(RecipeResponseDto::from)
                     .collect(Collectors.toList());
-
-            // Create a new page with filtered content
             return new PageImpl<>(filteredRecipes, pageable, filteredRecipes.size());
         }
 
         // No vegetarian filter needed, just convert to DTOs
         return recipePage.map(RecipeResponseDto::from);
+    }
+
+    private static String toCommaSeparatedString(List<String> list) {
+        return list != null && !list.isEmpty()
+                ? String.join(",", list)
+                : null;
     }
 }
