@@ -271,9 +271,9 @@ which may be too much for the scope of this coding challenge. As such, the curre
 decision to the application client.
 
 ### Testing
-The current implementation does not include unit tests or integration tests. While this is not a requirement in this 
-coding challenge, reliable testing scripts is paramount for maintaining quality in production-ready applications that 
-are continuously developed over time.
+The current implementation includes a unit test for the service layer but no integration tests. While this is not a 
+requirement in this coding challenge, reliable integration testing scripts is paramount for maintaining quality in 
+production-ready applications that are continuously developed over time.
 
 ### Database Schema Management
 Requirements may require changes to the data model, and by extension, the database schema. Tools like Liquibase can be 
