@@ -93,18 +93,12 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     private List<Recipe> searchRecipesFromDb(RecipeSearchRequestDto recipeSearchRequestDto) {
-        String includeIngredientsStr = toCommaSeparatedString(recipeSearchRequestDto.getIncludeIngredients());
-        String excludeIngredientsStr = toCommaSeparatedString(recipeSearchRequestDto.getExcludeIngredients());
-        String includeInstructionsStr = toCommaSeparatedString(recipeSearchRequestDto.getIncludeInstructions());
-        String excludeInstructionsStr = toCommaSeparatedString(recipeSearchRequestDto.getExcludeInstructions());
-
-        // Get all recipes matching the criteria
         return recipeRepository.findRecipesWithCriteria(
                 recipeSearchRequestDto.getServings(),
-                includeIngredientsStr,
-                excludeIngredientsStr,
-                includeInstructionsStr,
-                excludeInstructionsStr
+                toCommaSeparatedString(recipeSearchRequestDto.getIncludeIngredients()),
+                toCommaSeparatedString(recipeSearchRequestDto.getExcludeIngredients()),
+                toCommaSeparatedString(recipeSearchRequestDto.getIncludeInstructions()),
+                toCommaSeparatedString(recipeSearchRequestDto.getExcludeInstructions())
         );
     }
 
