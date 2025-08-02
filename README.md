@@ -39,6 +39,9 @@ Or if you want to run it in detached mode:
 docker compose up -d
 ```
 
+The Postman collection is available in the `docs/postman` directory. You can import it into Postman to test the API 
+endpoints.
+
 ## Local Development Setup
 For local development, you can use the following steps in order to set up the environment:
 

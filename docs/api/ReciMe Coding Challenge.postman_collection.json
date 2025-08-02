@@ -1,0 +1,276 @@
+{
+	"info": {
+		"_postman_id": "61bba9dd-dddc-4777-988b-0b7316f7f495",
+		"name": "ReciMe Coding Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41757248"
+	},
+	"item": [
+		{
+			"name": "Get All Recipes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/recipes?page=0&size=10&sort=title&direction=asc",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "title"
+						},
+						{
+							"key": "direction",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recipes with Filters",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/recipes?vegetarian=false&servings=4",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes"
+					],
+					"query": [
+						{
+							"key": "vegetarian",
+							"value": "false"
+						},
+						{
+							"key": "servings",
+							"value": "4"
+						},
+						{
+							"key": "includeIngredients",
+							"value": "pork belly",
+							"disabled": true
+						},
+						{
+							"key": "excludeIngredients",
+							"value": "garlic",
+							"disabled": true
+						},
+						{
+							"key": "includeInstructions",
+							"value": "tenderize",
+							"disabled": true
+						},
+						{
+							"key": "excludeInstructions",
+							"value": "tenderize",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "title",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "0",
+							"disabled": true
+						},
+						{
+							"key": "direction",
+							"value": "asc",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recipe By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/recipes/{{recipeId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes",
+						"{{recipeId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Recipe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"recipeId\", pm.response.json().id);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Chicken Adobo\",\n    \"description\": \"The classic Filipino dish but with chicken\",\n    \"ingredients\": [\n        {\n            \"amount\": 1,\n            \"name\": \"chicken breast\",\n            \"vegetarian\": false\n        },\n        {\n            \"amount\": 2,\n            \"unit\": \"clove\",\n            \"name\": \"garlic\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 5,\n            \"name\": \"bay leaf\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 4,\n            \"unit\": \"tbsp\",\n            \"name\": \"vinegar\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 0.5,\n            \"unit\": \"cup\",\n            \"name\": \"soy sauce\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 1,\n            \"unit\": \"tbsp\",\n            \"name\": \"peppercorn\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 2,\n            \"unit\": \"cup\",\n            \"name\": \"water\",\n            \"vegetarian\": true\n        }\n    ],\n    \"instructions\": [\n        \"Tenderize the chicken\",\n        \"Add soy sauce\",\n        \"Add vinegar\",\n        \"Mix all ingredients together\",\n        \"Let it all boil for 30 hours\",\n        \"This is obviously not the real instructions to make Adobo, just for testing :D\"\n    ],\n    \"servings\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recipes",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Replace Recipe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"recipeId\", pm.response.json().id);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Chicken Adobo\",\n    \"description\": \"The classic Filipino dish\",\n    \"ingredients\": [\n        {\n            \"amount\": 1,\n            \"name\": \"chicken wings\",\n            \"vegetarian\": false\n        },\n        {\n            \"amount\": 2,\n            \"unit\": \"clove\",\n            \"name\": \"garlic\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 5,\n            \"name\": \"bay leaf\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 4,\n            \"unit\": \"tbsp\",\n            \"name\": \"vinegar\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 0.5,\n            \"unit\": \"cup\",\n            \"name\": \"soy sauce\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 1,\n            \"unit\": \"tbsp\",\n            \"name\": \"peppercorn\",\n            \"vegetarian\": true\n        },\n        {\n            \"amount\": 2,\n            \"unit\": \"cup\",\n            \"name\": \"water\",\n            \"vegetarian\": true\n        }\n    ],\n    \"instructions\": [\n        \"Tenderize the pork\",\n        \"Add soy sauce\",\n        \"Add vinegar\",\n        \"Let it all boil for 30 hours\"\n    ],\n    \"servings\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recipes/{{recipeId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes",
+						"{{recipeId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Recipe By ID",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Pork Adobs\",\n    \"ingredients\": [\n        {\n            \"amount\": 1.0,\n            \"unit\": \"kg\",\n            \"name\": \"pork strips\",\n            \"vegetarian\": true\n        }\n    ],\n    \"instructions\": [\n        \n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recipes/{{recipeId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes",
+						"{{recipeId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Recipe",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Pork Adobo\",\n    \"description\": \"The classic Filipino dish\",\n    \"ingredients\": [\n        {\n            \n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recipes/{{recipeId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes",
+						"{{recipeId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "recipeId",
+			"value": ""
+		}
+	]
+}
