@@ -66,6 +66,15 @@ password: recime_password
 
 Or you can define your own database credentials in the `src/main/resources/application.yml` file.
 
+## Building the Application
+To build the application as a Docker image, run the following command in the project root:
+
+```bash
+docker build -t cpmiras/recime-coding-challenge:latest .
+```
+
+This will build the Docker image locally with the tag used in the `docker-compose.yml` file.
+
 ## Design Decisions
 
 ### #1: Data Model
