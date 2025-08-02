@@ -251,6 +251,8 @@ stored _as-is_ as described in the recipe upon creation)
 different ingredients or instructions.
 3. There is no checking for duplicate recipes. This is to allow users to create similar recipes with slight variations. 
 This is also the current implementation in the ReciMe app.
+4. Search for ingredients is done using a case-insensitive but exact search (e.g. searching for "SHRIMP" will match 
+"shrimp" but not "shrimp substitute").
 
 ## Possible Future Enhancements
 
