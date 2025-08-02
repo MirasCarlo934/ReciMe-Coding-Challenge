@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -255,12 +256,12 @@ class RecipeServiceImplTest {
     void searchRecipes_WithNoFilters_ShouldReturnAllRecipes() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(Arrays.asList(testRecipe), pageable, 1);
+        List<Recipe> recipes = Arrays.asList(testRecipe);
         RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder().build();
 
         when(recipeRepository.findRecipesWithCriteria(
-                any(), any(), any(), any(), any(), eq(pageable)
-        )).thenReturn(recipePage);
+                any(), any(), any(), any(), any()
+        )).thenReturn(recipes);
 
         // When
         Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
@@ -268,8 +269,11 @@ class RecipeServiceImplTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getNumber()).isEqualTo(0);
+        assertThat(result.getSize()).isEqualTo(10);
         verify(recipeRepository).findRecipesWithCriteria(
-                any(), any(), any(), any(), any(), eq(pageable)
+                any(), any(), any(), any(), any()
         );
     }
 
@@ -277,14 +281,14 @@ class RecipeServiceImplTest {
     void searchRecipes_WithServingsFilter_ShouldFilterByServings() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(Arrays.asList(testRecipe), pageable, 1);
+        List<Recipe> recipes = Arrays.asList(testRecipe);
         RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder()
                 .servings(4)
                 .build();
 
         when(recipeRepository.findRecipesWithCriteria(
-                eq(4), any(), any(), any(), any(), eq(pageable)
-        )).thenReturn(recipePage);
+                eq(4), any(), any(), any(), any()
+        )).thenReturn(recipes);
 
         // When
         Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
@@ -293,8 +297,9 @@ class RecipeServiceImplTest {
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).getServings()).isEqualTo(4);
+        assertThat(result.getTotalElements()).isEqualTo(1);
         verify(recipeRepository).findRecipesWithCriteria(
-                eq(4), any(), any(), any(), any(), eq(pageable)
+                eq(4), any(), any(), any(), any()
         );
     }
 
@@ -302,14 +307,14 @@ class RecipeServiceImplTest {
     void searchRecipes_WithVegetarianFilter_ShouldFilterByVegetarian() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(Arrays.asList(testRecipe), pageable, 1);
+        List<Recipe> recipes = Arrays.asList(testRecipe);
         RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder()
                 .vegetarian(true)
                 .build();
 
         when(recipeRepository.findRecipesWithCriteria(
-                any(), any(), any(), any(), any(), eq(pageable)
-        )).thenReturn(recipePage);
+                any(), any(), any(), any(), any()
+        )).thenReturn(recipes);
 
         // When
         Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
@@ -319,8 +324,9 @@ class RecipeServiceImplTest {
         assertThat(result.getContent()).hasSize(1);
         // Since test recipe has vegetarian ingredients, it should be vegetarian
         assertThat(result.getContent().get(0).isVegetarian()).isTrue();
+        assertThat(result.getTotalElements()).isEqualTo(1);
         verify(recipeRepository).findRecipesWithCriteria(
-                any(), any(), any(), any(), any(), eq(pageable)
+                any(), any(), any(), any(), any()
         );
     }
 
@@ -328,14 +334,14 @@ class RecipeServiceImplTest {
     void searchRecipes_WithIncludeIngredientsFilter_ShouldFilterByIngredients() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(Arrays.asList(testRecipe), pageable, 1);
+        List<Recipe> recipes = Arrays.asList(testRecipe);
         RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder()
                 .includeIngredients(Arrays.asList("test ingredient"))
                 .build();
 
         when(recipeRepository.findRecipesWithCriteria(
-                any(), eq("test ingredient"), any(), any(), any(), eq(pageable)
-        )).thenReturn(recipePage);
+                any(), eq("test ingredient"), any(), any(), any()
+        )).thenReturn(recipes);
 
         // When
         Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
@@ -343,8 +349,9 @@ class RecipeServiceImplTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getTotalElements()).isEqualTo(1);
         verify(recipeRepository).findRecipesWithCriteria(
-                any(), eq("test ingredient"), any(), any(), any(), eq(pageable)
+                any(), eq("test ingredient"), any(), any(), any()
         );
     }
 
@@ -352,14 +359,14 @@ class RecipeServiceImplTest {
     void searchRecipes_WithExcludeIngredientsFilter_ShouldExcludeRecipes() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(Arrays.asList(testRecipe), pageable, 1);
+        List<Recipe> recipes = Arrays.asList(testRecipe);
         RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder()
                 .excludeIngredients(Arrays.asList("test ingredient"))
                 .build();
 
         when(recipeRepository.findRecipesWithCriteria(
-                any(), any(), eq("test ingredient"), any(), any(), eq(pageable)
-        )).thenReturn(recipePage);
+                any(), any(), eq("test ingredient"), any(), any()
+        )).thenReturn(recipes);
 
         // When
         Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
@@ -367,8 +374,81 @@ class RecipeServiceImplTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getTotalElements()).isEqualTo(1);
         verify(recipeRepository).findRecipesWithCriteria(
-                any(), any(), eq("test ingredient"), any(), any(), eq(pageable)
+                any(), any(), eq("test ingredient"), any(), any()
+        );
+    }
+
+    @Test
+    void searchRecipes_WithPagination_ShouldReturnCorrectPage() {
+        // Given
+        Recipe recipe2 = Recipe.builder()
+                .id("test-recipe-id-2")
+                .title("Test Recipe 2")
+                .description("Test Description 2")
+                .servings(2)
+                .ingredients(Arrays.asList(
+                        Ingredient.builder()
+                                .name("another ingredient")
+                                .amount(2.0f)
+                                .unit("tbsp")
+                                .vegetarian(true)
+                                .build()
+                ))
+                .instructions(Arrays.asList(
+                        Instruction.builder()
+                                .instruction("Another instruction")
+                                .step(0)
+                                .build()
+                ))
+                .build();
+
+        Pageable pageable = PageRequest.of(1, 1); // Second page, 1 item per page
+        List<Recipe> recipes = Arrays.asList(testRecipe, recipe2);
+        RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder().build();
+
+        when(recipeRepository.findRecipesWithCriteria(
+                any(), any(), any(), any(), any()
+        )).thenReturn(recipes);
+
+        // When
+        Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getId()).isEqualTo("test-recipe-id-2");
+        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getTotalPages()).isEqualTo(2);
+        assertThat(result.getNumber()).isEqualTo(1);
+        assertThat(result.getSize()).isEqualTo(1);
+        verify(recipeRepository).findRecipesWithCriteria(
+                any(), any(), any(), any(), any()
+        );
+    }
+
+    @Test
+    void searchRecipes_WithEmptyResults_ShouldReturnEmptyPage() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Recipe> recipes = Arrays.asList();
+        RecipeSearchRequestDto searchRequest = RecipeSearchRequestDto.builder().build();
+
+        when(recipeRepository.findRecipesWithCriteria(
+                any(), any(), any(), any(), any()
+        )).thenReturn(recipes);
+
+        // When
+        Page<RecipeResponseDto> result = recipeService.searchRecipes(searchRequest, pageable);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isEmpty();
+        assertThat(result.getTotalElements()).isEqualTo(0);
+        assertThat(result.getTotalPages()).isEqualTo(0);
+        verify(recipeRepository).findRecipesWithCriteria(
+                any(), any(), any(), any(), any()
         );
     }
 }
