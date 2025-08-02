@@ -1,5 +1,6 @@
 package com.recime.codingchallenge.controller;
 
+import com.recime.codingchallenge.exception.InvalidSortDirectionException;
 import com.recime.codingchallenge.exception.InvalidSortPropertyException;
 import com.recime.codingchallenge.exception.RecipeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +26,13 @@ public class GlobalExceptionHandler {
         return new ErrorResponseBody(ex.getMessage());
     }
 
-    @ExceptionHandler(InvalidSortPropertyException.class)
+    @ExceptionHandler({
+            InvalidSortPropertyException.class,
+            InvalidSortDirectionException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponseBody handleInvalidSortPropertyException(InvalidSortPropertyException ex) {
+    public ErrorResponseBody handleSortingExceptions(RuntimeException ex) {
         log.error(ex.getMessage(), ex);
         return new ErrorResponseBody(ex.getMessage());
     }
